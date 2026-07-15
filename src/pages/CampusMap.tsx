@@ -197,9 +197,9 @@ export default function CampusMap() {
 
       {/* Floating Search Overlay (Top) */}
       <div className="absolute top-4 left-4 right-4 md:left-6 md:w-96 z-[2000]">
-        <div className={\`bg-white/95 dark:bg-card/95 backdrop-blur-xl rounded-2xl shadow-xl border border-border/50 transition-all duration-300 \${isSearchFocused ? 'shadow-2xl ring-2 ring-primary/20' : ''}\`}>
+        <div className={'bg-white/95 dark:bg-card/95 backdrop-blur-xl rounded-2xl shadow-xl border border-border/50 transition-all duration-300 ' + (isSearchFocused ? 'shadow-2xl ring-2 ring-primary/20' : '')}>
           <div className="flex items-center px-4 h-14">
-            <Search size={20} className={\`shrink-0 transition-colors \${isSearchFocused ? 'text-primary' : 'text-muted-foreground'}\`} />
+            <Search size={20} className={'shrink-0 transition-colors ' + (isSearchFocused ? 'text-primary' : 'text-muted-foreground')} />
             <input
               ref={searchInputRef}
               type="text"
@@ -282,11 +282,11 @@ export default function CampusMap() {
                   <button
                     key={cat.id}
                     onClick={() => handleCategoryClick(cat.id)}
-                    className={\`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-md active:scale-95 \${
+                    className={'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-md active:scale-95 ' + (
                       isActive
                         ? 'text-white shadow-lg'
                         : 'bg-white/95 dark:bg-card/95 text-muted-foreground hover:bg-white hover:text-foreground'
-                    }\`}
+                    )}
                     style={isActive ? { backgroundColor: cat.color } : {}}
                   >
                     <Icon size={16} />
@@ -490,7 +490,7 @@ export default function CampusMap() {
                 {/* View Details Button */}
                 <div className="pt-2">
                   <button
-                    onClick={() => navigate(\`/detail/building/\${selectedBuilding.id}\`)}
+                    onClick={() => navigate('/detail/building/' + selectedBuilding.id)}
                     className="w-full py-3.5 bg-secondary text-secondary-foreground rounded-2xl font-bold text-sm hover:bg-secondary/80 transition-colors"
                   >
                     View Full Directory
