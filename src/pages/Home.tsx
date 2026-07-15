@@ -155,9 +155,7 @@ export default function Home() {
   const todayEvents = events.slice(0, 3);
   const newJobs = jobs.filter((j) => j.isNew).slice(0, 3);
 
-  // Next class
-  const nextClass = DEMO_SCHEDULE.find((c) => c.status === 'in-progress') ||
-    DEMO_SCHEDULE.find((c) => c.status === 'upcoming');
+
 
   const toggleFav = (id: string) =>
     setFavEvents((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
