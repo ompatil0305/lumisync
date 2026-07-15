@@ -93,7 +93,7 @@ export const buildings: Building[] = [
     name: 'Holden Hall',
     abbreviation: 'HOLD',
     aliases: ['Holden', 'A&S Building'],
-    coordinates: [33.5833, -101.8767],
+    coordinates: [33.5835, -101.8745],
     category: 'academic',
     departments: ['Computer Science', 'Mathematics & Statistics', 'Physics'],
     address: '1011 Boston Ave',
@@ -103,7 +103,7 @@ export const buildings: Building[] = [
     nearestShuttleStop: 'Student Union Building',
     photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
     wheelchairAccessible: true,
-    needsReview: true,
+    needsReview: false,
     dataSource: 'official-directory'
   },
   {
@@ -121,7 +121,7 @@ export const buildings: Building[] = [
     nearestShuttleStop: 'Administration Building',
     photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
     wheelchairAccessible: true,
-    needsReview: true,
+    needsReview: false,
     dataSource: 'official-directory'
   },
   {
@@ -129,7 +129,7 @@ export const buildings: Building[] = [
     name: 'Student Union Building',
     abbreviation: 'SUB',
     aliases: ['The SUB', 'Union'],
-    coordinates: [33.5818, -101.8750],
+    coordinates: [33.5813810, -101.8747164],
     category: 'academic',
     departments: ['Student Involvement', 'University ID Office', 'TechConnect'],
     address: '1500 Akron Ave',
@@ -140,7 +140,7 @@ export const buildings: Building[] = [
     nearestShuttleStop: 'Student Union Building',
     photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
     wheelchairAccessible: true,
-    needsReview: true,
+    needsReview: false,
     dataSource: 'official-directory'
   },
   {

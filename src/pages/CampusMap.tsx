@@ -12,6 +12,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useOSMBuildings } from '../hooks/useOSMBuildings';
+import { GeoJSON } from 'react-leaflet';
 
 // Custom SVG marker generator
 function createCustomMarker(color: string, isSelected: boolean) {
@@ -84,6 +86,9 @@ export default function CampusMap() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>(info.location.coordinates);
 
+  const ttuBounds: [number, number, number, number] = [33.570, -101.900, 33.600, -101.860];
+  const { data: osmData } = useOSMBuildings(ttuBounds);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Map limits
@@ -154,6 +159,17 @@ export default function CampusMap() {
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
+          {osmData && (
+            <GeoJSON 
+              data={osmData} 
+              style={{
+                fillColor: '#cc0000',
+                fillOpacity: 0.15,
+                color: '#cc0000',
+                weight: 1,
+              }}
+            />
+          )}
           <MapController center={mapCenter} />
 
           <MarkerClusterGroup
