@@ -7,7 +7,7 @@ import type { CampusBuilding } from '../providers/types';
 import {
   Search, X, Building2, GraduationCap, Home, BookOpen,
   Trophy, Car, Heart, Landmark, UtensilsCrossed, Bus,
-  Navigation, ChevronRight, Crosshair, Share, Star, Navigation2
+  Crosshair, Share, Star, Navigation2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import L from 'leaflet';
