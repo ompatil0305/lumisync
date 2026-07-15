@@ -16,7 +16,7 @@
 
 *Designed to expand to universities worldwide.*
 
-🌐 **Live Demo:** https://lumisync-2er7.vercel.app
+🌐 **Live Demo:** https://lumisync.vercel.app
 
 </div>
 
@@ -369,29 +369,10 @@ npm run preview
 
 # 🌍 Live Demo
 
-**https://lumisync-2er7.vercel.app**
+** https://lumisync.vercel.app**
 
 ---
 
-# 📸 Screenshots
-
-### Home Dashboard
-
-> *(Add screenshot here)*
-
-### Campus Map
-
-> *(Add screenshot here)*
-
-### Faculty Directory
-
-> *(Add screenshot here)*
-
-### Dining
-
-> *(Add screenshot here)*
-
----
 
 # 🎯 Vision
 
