@@ -12,7 +12,7 @@ import {
   Calendar, Briefcase, ChevronRight,
   AlertTriangle, X, Sparkles,
   GraduationCap, MapPin, Bus, BookOpen,
-  Clock, Navigation2, Star, Heart, ArrowRight,
+  Clock, Navigation2, Heart, ArrowRight,
   Building2, Compass, Users, Wifi
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
