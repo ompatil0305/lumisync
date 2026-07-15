@@ -58,6 +58,7 @@ export interface CampusBuilding {
   id: string;
   name: string;
   abbreviation: string;
+  aliases?: string[];
   coordinates: [number, number];
   category: BuildingCategory;
   departments?: string[];
@@ -72,7 +73,22 @@ export interface CampusBuilding {
   website?: string;
   hours?: { [key: string]: { open: string; close: string } };
   accessibility?: string[];
+  wheelchairAccessible?: boolean;
+  needsReview?: boolean;
+  markerIcon?: string;
   dataSource: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
+}
+
+// ---- Navigation Types (Future Support) ----
+export type RouteType = 'walking' | 'wheelchair' | 'cycling' | 'indoor';
+
+export interface NavigationRoute {
+  id: string;
+  type: RouteType;
+  path: [number, number][];
+  distance: number;
+  estimatedTime: number;
+  instructions: string[];
 }
 
 // ---- Faculty Types ----
