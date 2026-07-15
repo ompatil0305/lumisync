@@ -71,6 +71,7 @@ export interface Building {
   id: string;
   name: string;
   abbreviation: string;
+  aliases?: string[];
   coordinates: [number, number];
   category: 'academic' | 'administrative' | 'residence' | 'dining' | 'library' | 'recreation' | 'parking' | 'landmark' | 'health' | 'museum';
   departments?: string[];
@@ -81,6 +82,9 @@ export interface Building {
   hasParkingNearby?: string[];
   nearestShuttleStop?: string;
   photo?: string;
+  wheelchairAccessible?: boolean;
+  needsReview?: boolean;
+  dataSource?: string;
 }
 
 export const buildings: Building[] = [
