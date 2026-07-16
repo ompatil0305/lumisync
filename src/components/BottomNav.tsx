@@ -36,16 +36,16 @@ export default function BottomNav() {
                 navigate(tab.path);
               }}
               className={`flex flex-col items-center justify-center gap-0.5 w-16 h-full transition-colors ${
-                isActive ? 'text-primary' : 'text-muted-foreground'
+                isActive ? (tab.key === 'lumi' ? 'text-indigo-600' : 'text-primary') : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <div className={`relative p-1.5 rounded-xl transition-all ${isActive ? 'bg-primary/10' : ''}`}>
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 1.5} />
+              <div className={`relative p-1.5 rounded-xl transition-all duration-300 ${isActive ? (tab.key === 'lumi' ? 'bg-indigo-100 shadow-inner' : 'bg-primary/10 scale-110') : ''}`}>
+                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} className={tab.key === 'lumi' && isActive ? 'drop-shadow-sm' : ''} />
                 {tab.key === 'lumi' && (
-                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent rounded-full" />
+                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full lumi-gradient border-2 border-background animate-pulse" />
                 )}
               </div>
-              <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : ''}`}>
+              <span className={`text-[10px] font-semibold tracking-wide ${isActive ? (tab.key === 'lumi' ? 'lumi-gradient-text font-bold' : '') : ''}`}>
                 {tab.label}
               </span>
             </button>

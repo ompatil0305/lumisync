@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router';
 import { AppProvider, useApp } from './context/AppContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -32,6 +32,7 @@ import OrgDetail from './pages/detail/OrgDetail';
 
 // Components
 import BottomNav from './components/BottomNav';
+import SplashScreen from './components/SplashScreen';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -110,10 +111,13 @@ function AppContent() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AppProvider>
-        <AppContent />
+        {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+        {!showSplash && <AppContent />}
       </AppProvider>
     </QueryClientProvider>
   );

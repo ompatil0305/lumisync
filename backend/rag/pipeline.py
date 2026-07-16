@@ -1,5 +1,5 @@
 import logging
-from services.openai_service import OpenAIService
+from services.gemini_service import GeminiService
 from services.vector_service import VectorService
 from prompts.manager import get_system_prompt
 
@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class RAGPipeline:
     def __init__(self):
-        self.openai_service = OpenAIService()
+        self.ai_service = GeminiService()
         self.vector_service = VectorService()
 
     async def chat(self, messages: list[dict], university_id: str = "ttu"):
@@ -17,7 +17,7 @@ class RAGPipeline:
             user_question = messages[-1]["content"] if messages else ""
             
             # 2. Generate embedding for the question
-            question_embedding = await self.openai_service.get_embedding(user_question)
+            question_embedding = await self.ai_service.get_embedding(user_question)
             
             # 3. Retrieve relevant documents from pgvector
             relevant_docs = self.vector_service.search_similar(question_embedding, limit=5)
@@ -43,13 +43,13 @@ class RAGPipeline:
             # 5. Build prompt
             system_prompt = get_system_prompt(university_id, context_text)
             
-            # 6. Stream response from OpenAI
+            # 6. Stream response from AI
             async def stream_with_citations():
                 # We yield a JSON string for each chunk so the frontend can parse citations if needed,
                 # or just stream the text and send citations at the start/end.
                 # For simplicity, we just yield raw text to stream, 
                 # but we could wrap it if we want custom SSE.
-                async for chunk in self.openai_service.chat_stream(messages, system_prompt):
+                async for chunk in self.ai_service.chat_stream(messages, system_prompt):
                     yield chunk
 
             return stream_with_citations(), citations
