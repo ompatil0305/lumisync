@@ -35,17 +35,17 @@ export default function BottomNav() {
                 dispatch({ type: 'SET_TAB', tab: tab.key });
                 navigate(tab.path);
               }}
-              className={`flex flex-col items-center justify-center gap-0.5 w-16 h-full transition-colors ${
-                isActive ? (tab.key === 'lumi' ? 'text-primary drop-shadow-sm' : 'text-primary') : 'text-muted-foreground hover:text-foreground'
+              className={`flex flex-col items-center justify-center gap-1 w-16 h-full transition-colors ${
+                isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <div className={`relative p-1.5 rounded-xl transition-all duration-300 ${isActive ? (tab.key === 'lumi' ? 'bg-primary/20 shadow-inner' : 'bg-primary/10 scale-110') : ''}`}>
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} className={tab.key === 'lumi' && isActive ? 'drop-shadow-sm' : ''} />
+              <div className="relative p-1">
+                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                 {tab.key === 'lumi' && (
-                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full lumi-gradient border-2 border-background animate-pulse" />
+                  <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-blue-600 border-2 border-background animate-pulse" />
                 )}
               </div>
-              <span className={`text-[10px] font-semibold tracking-wide ${isActive ? (tab.key === 'lumi' ? 'text-primary font-bold' : '') : ''}`}>
+              <span className={`text-[10px] font-medium tracking-wide ${isActive ? 'font-bold' : ''}`}>
                 {tab.label}
               </span>
             </button>

@@ -6,13 +6,14 @@ interface SplashScreenProps {
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [exiting, setExiting] = useState(false);
+  const [phase, setPhase] = useState<'enter' | 'hold' | 'exit'>('enter');
 
   useEffect(() => {
-    // After 2s begin exit animation, call onComplete at 2.5s
-    const exitTimer = setTimeout(() => setExiting(true), 2000);
-    const doneTimer = setTimeout(() => onComplete(), 2500);
+    const holdTimer = setTimeout(() => setPhase('hold'), 400);
+    const exitTimer = setTimeout(() => setPhase('exit'), 1800);
+    const doneTimer = setTimeout(() => onComplete(), 2200);
     return () => {
+      clearTimeout(holdTimer);
       clearTimeout(exitTimer);
       clearTimeout(doneTimer);
     };
@@ -20,41 +21,40 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-background ${exiting ? 'splash-exit' : ''}`}
+      className={`fixed inset-0 z-[999] flex flex-col items-center justify-between bg-black py-16 transition-opacity duration-500 ease-out ${phase === 'exit' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      style={{ backgroundColor: '#000000' }}
       aria-label="Loading Lumisync"
+      role="status"
     >
-      {/* Ambient gradient blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute -top-32 -left-32 w-80 h-80 rounded-full opacity-20 blur-3xl"
-          style={{ background: 'radial-gradient(circle, rgb(79,70,229), transparent)' }}
-        />
-        <div
-          className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full opacity-15 blur-3xl"
-          style={{ background: 'radial-gradient(circle, rgb(14,165,233), transparent)' }}
-        />
+      {/* Top spacer */}
+      <div />
+
+      {/* Center: Logo + wordmark */}
+      <div
+        className={`flex flex-col items-center gap-0 transition-all duration-500 ease-out ${phase === 'enter' ? 'opacity-0 scale-95 translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`}
+      >
+        <Logo size={56} variant="full" light={true} />
       </div>
 
-      {/* Logo */}
-      <div className="splash-logo relative z-10">
-        <Logo size={56} variant="full" />
-      </div>
-
-      {/* Tagline */}
-      <p className="splash-tagline relative z-10 mt-4 text-sm font-medium text-muted-foreground tracking-wide">
-        Your campus, supercharged.
-      </p>
-
-      {/* Loading indicator */}
-      <div className="absolute bottom-16 z-10 flex gap-1.5">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="w-1.5 h-1.5 rounded-full bg-primary/40"
-            style={{ animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }}
+      {/* Bottom: Loading indicator + "Powered by Lumi" */}
+      <div
+        className={`flex flex-col items-center gap-5 transition-all duration-500 ease-out delay-200 ${phase === 'enter' ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}
+      >
+        {/* Linear progress bar in TTU Red */}
+        <div className="w-[140px] h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+          <div
+            className="absolute left-0 top-0 h-full bg-[#CC0000] rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: phase === 'enter' ? '0%' : phase === 'hold' ? '70%' : '100%',
+            }}
           />
-        ))}
+        </div>
+        <p className="text-[10px] font-bold text-stone-500 uppercase tracking-[0.25em]">
+          Powered by Lumi
+        </p>
       </div>
     </div>
   );
 }
+
+

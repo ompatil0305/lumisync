@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <!-- Primary Meta -->
-    <title>Lumisync — Your AI-Powered Campus Companion</title>
-    <meta name="description" content="Lumisync supercharges your campus experience. Explore dining, events, campus maps, parking, jobs, and more — all powered by AI. Built for universities worldwide." />
+    <title>Lumisync — The AI Campus Operating System</title>
+    <meta name="description" content="Lumisync is the AI-powered operating system for university campuses. Dining, events, campus maps, parking, faculty, jobs, and Lumi AI — all in one seamless experience. Built for universities worldwide." />
     <meta name="keywords" content="campus app, university app, AI campus, student app, campus map, dining, events, Lumisync" />
     <meta name="author" content="Lumisync" />
-    <meta name="theme-color" content="#4F46E5" />
+    <meta name="theme-color" content="#CC0000" />
     <meta name="color-scheme" content="light dark" />
 
     <!-- PWA -->
@@ -21,16 +21,16 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://lumisync.app/" />
-    <meta property="og:title" content="Lumisync — Your AI-Powered Campus Companion" />
-    <meta property="og:description" content="Supercharge your campus experience with Lumisync. Dining, events, maps, jobs, and an AI assistant — all in one app." />
-    <meta property="og:image" content="https://lumisync.app/og-image.png" />
+    <meta property="og:url" content="https://lumisync.vercel.app/" />
+    <meta property="og:title" content="Lumisync — The AI Campus Operating System" />
+    <meta property="og:description" content="One platform for every campus need. Powered by AI. Built for universities worldwide." />
+    <meta property="og:image" content="https://lumisync.vercel.app/og-image.png" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Lumisync — Your AI-Powered Campus Companion" />
-    <meta name="twitter:description" content="Supercharge your campus experience with Lumisync." />
-    <meta name="twitter:image" content="https://lumisync.app/og-image.png" />
+    <meta name="twitter:title" content="Lumisync — The AI Campus Operating System" />
+    <meta name="twitter:description" content="Dining, events, maps, parking, faculty, jobs, and Lumi AI — all in one app. Built for universities worldwide." />
+    <meta name="twitter:image" content="https://lumisync.vercel.app/og-image.png" />
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -40,7 +40,66 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Branded Hydration Loading Skeleton -->
+      <style>
+        .hydration-loader {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #000000;
+          color: #FAFAF9;
+          font-family: system-ui, -apple-system, sans-serif;
+          z-index: 9999;
+        }
+        .hydration-logo {
+          width: 56px;
+          height: 56px;
+          animation: logo-pulse 1.8s ease-in-out infinite;
+        }
+        .hydration-bar {
+          width: 140px;
+          height: 2px;
+          background-color: rgba(255, 255, 255, 0.1);
+          border-radius: 99px;
+          margin-top: 24px;
+          overflow: hidden;
+          position: relative;
+        }
+        .hydration-progress {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 50%;
+          background-color: #CC0000;
+          border-radius: 99px;
+          animation: bar-slide 1.5s ease-in-out infinite;
+        }
+        @keyframes logo-pulse {
+          0%, 100% { opacity: 0.6; transform: scale(0.96); }
+          50% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes bar-slide {
+          0% { left: -50%; }
+          100% { left: 100%; }
+        }
+      </style>
+      <div class="hydration-loader">
+        <svg class="hydration-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" stroke="#ffffff" stroke-width="3" opacity="0.15" />
+          <path d="M20 5A15 15 0 0 1 35 20" stroke="#CC0000" stroke-width="3.5" stroke-linecap="round" />
+          <path d="M20 35A15 15 0 0 1 5 20" stroke="#CC0000" stroke-width="3.5" stroke-linecap="round" />
+          <circle cx="20" cy="20" r="5" fill="#ffffff" />
+        </svg>
+        <div class="hydration-bar">
+          <div class="hydration-progress"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
