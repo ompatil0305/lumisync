@@ -341,9 +341,6 @@ Clone the repository
 git clone https://github.com/ompatil0305/lumisync.git
 ```
 
-## Architecture Notes
-- **App Shell SPA:** The main client application (`lumisync`) is built as a pure client-rendered Vite Single Page Application (SPA). This is intentional since the dashboard sits behind the landing page and is private/authenticated, while the public marketing pages are server-side rendered (SSR) in the Next.js `lumisync_website` repository to handle SEO, sitemaps, and public metadata.
-
 Install dependencies
 
 ```bash
@@ -429,6 +426,11 @@ This project uses publicly available information where appropriate and relies on
 - OpenStreetMap
 
 Future integrations may use official university APIs and other public data sources where available.
+
+---
+
+## 🏗 Architecture Notes
+- **App Shell SPA:** The main client application (`lumisync`) is built as a pure client-rendered Vite Single Page Application (SPA). This is intentional since the dashboard sits behind the landing page and is private/authenticated, while the public marketing pages are server-side rendered (SSR) in the Next.js `lumisync_website` repository to handle SEO, sitemaps, and public metadata.
 
 ---
 
