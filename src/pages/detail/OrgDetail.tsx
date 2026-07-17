@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { studentOrgs } from '../../data/universityProfile';
+import { useOrganization } from '../../hooks/useUniversity';
 import { ChevronLeft, Users, Users2, Heart, Mail, Clock, MapPin, ExternalLink } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -7,7 +7,16 @@ export default function OrgDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
-  const org = studentOrgs.find(o => o.id === id);
+  
+  const { data: org, isLoading } = useOrganization(id || '');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!org) {
     return (

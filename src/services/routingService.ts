@@ -8,13 +8,19 @@ export interface RouteResult {
 export async function fetchRoute(
   start: { lat: number; lng: number },
   end: { lat: number; lng: number },
-  _options?: { avoidStairs?: boolean }
+  options?: { mode?: 'walking' | 'cycling' | 'accessible'; avoidStairs?: boolean }
 ): Promise<RouteResult> {
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const mode = options?.mode || 'walking';
+  
+  // Map standard modes to Mapbox profile names
+  const mapboxProfile = mode === 'cycling' ? 'cycling' : 'walking';
+  // Map standard modes to OSRM profile names
+  const osrmProfile = mode === 'cycling' ? 'bicycle' : 'foot';
 
   if (mapboxToken) {
     try {
-      const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${start.lng},${start.lat};${end.lng},${end.lat}?geometries=geojson&access_token=${mapboxToken}`;
+      const url = `https://api.mapbox.com/directions/v5/mapbox/${mapboxProfile}/${start.lng},${start.lat};${end.lng},${end.lat}?geometries=geojson&access_token=${mapboxToken}`;
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
@@ -34,9 +40,9 @@ export async function fetchRoute(
     }
   }
 
-  // Default to OSRM public walking router
+  // Default to OSRM public walking/bicycle router
   try {
-    const url = `https://router.project-osrm.org/route/v1/foot/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson&steps=true`;
+    const url = `https://router.project-osrm.org/route/v1/${osrmProfile}/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson&steps=true`;
     const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
     if (res.ok) {
       const data = await res.json();

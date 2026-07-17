@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { campusJobs } from '../../data/universityProfile';
+import { useJobs } from '../../hooks/useUniversity';
 import { Briefcase, Search, ChevronLeft, MapPin, Clock, DollarSign } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -11,6 +11,8 @@ export default function JobsScreen() {
   useApp(); // for future use
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+
+  const { data: campusJobs = [] } = useJobs();
 
   const filtered = campusJobs.filter(j => {
     const matchesSearch = j.title.toLowerCase().includes(query.toLowerCase()) ||

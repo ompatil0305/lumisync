@@ -17,6 +17,7 @@ interface AppState {
   savedEvents: string[];
   favoriteDining: string[];
   favoriteOrgs: string[];
+  favoriteBuildings: string[];
   dismissedAlerts: string[];
   notifications: boolean;
   textSize: 'normal' | 'large' | 'extra-large';
@@ -40,6 +41,7 @@ type Action =
   | { type: 'TOGGLE_SAVE_EVENT'; eventId: string }
   | { type: 'TOGGLE_FAVORITE_DINING'; venueId: string }
   | { type: 'TOGGLE_FAVORITE_ORG'; orgId: string }
+  | { type: 'TOGGLE_FAVORITE_BUILDING'; buildingId: string }
   | { type: 'DISMISS_ALERT'; alertId: string }
   | { type: 'SET_NOTIFICATIONS'; enabled: boolean }
   | { type: 'SET_TEXT_SIZE'; size: AppState['textSize'] }
@@ -62,6 +64,7 @@ const initialState: AppState = {
   savedEvents: [],
   favoriteDining: [],
   favoriteOrgs: [],
+  favoriteBuildings: [],
   dismissedAlerts: [],
   notifications: true,
   textSize: 'normal',
@@ -114,6 +117,13 @@ function appReducer(state: AppState, action: Action): AppState {
         favoriteOrgs: state.favoriteOrgs.includes(action.orgId)
           ? state.favoriteOrgs.filter(id => id !== action.orgId)
           : [...state.favoriteOrgs, action.orgId],
+      };
+    case 'TOGGLE_FAVORITE_BUILDING':
+      return {
+        ...state,
+        favoriteBuildings: state.favoriteBuildings.includes(action.buildingId)
+          ? state.favoriteBuildings.filter(id => id !== action.buildingId)
+          : [...state.favoriteBuildings, action.buildingId],
       };
     case 'DISMISS_ALERT':
       return { ...state, dismissedAlerts: [...state.dismissedAlerts, action.alertId] };
@@ -175,5 +185,6 @@ export function useSavedState() {
     isEventSaved: (id: string) => state.savedEvents.includes(id),
     isDiningFav: (id: string) => state.favoriteDining.includes(id),
     isOrgFav: (id: string) => state.favoriteOrgs.includes(id),
+    isBuildingFav: (id: string) => state.favoriteBuildings.includes(id),
   };
 }

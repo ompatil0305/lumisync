@@ -1,19 +1,35 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
-import { MapContainer, TileLayer, Marker, Polyline, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, GeoJSON, useMap, Tooltip } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { useBuildings, useUniversityInfo } from '../hooks/useUniversity';
+import { useApp } from '../context/AppContext';
 import type { CampusBuilding } from '../providers/types';
 import {
   Search, X, Building2, GraduationCap, Home, BookOpen,
   Trophy, Car, Landmark, UtensilsCrossed, Bus,
   Crosshair, Navigation2, ShieldAlert,
-  MapPin, Check, Info
+  MapPin, Check, Info, Heart, Share2, ExternalLink,
+  Bike, Phone, Globe, Mail
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { fetchRoute, type RouteResult } from '../services/routingService';
+
+// Custom short label generator for direct map labels
+function getShortLabel(b: CampusBuilding) {
+  if (b.abbreviation) return b.abbreviation;
+  return b.name
+    .replace('Building', '')
+    .replace('University', '')
+    .replace('Residence Hall', 'Hall')
+    .replace('Special Collection', '')
+    .trim()
+    .split(' ')
+    .slice(0, 2)
+    .join(' ');
+}
 
 // Custom SVG marker generator helper
 function getCategoryIconSvg(category: string) {
@@ -128,11 +144,15 @@ export default function CampusMap() {
 
   const [selectedBuilding, setSelectedBuilding] = useState<CampusBuilding | null>(null);
   
+  const { state, dispatch } = useApp();
+  const [routingMode, setRoutingMode] = useState<'walking' | 'cycling' | 'accessible'>('walking');
+  const [copiedLink, setCopiedLink] = useState(false);
+  
   // Geolocation and routing states
   const [userLatLng, setUserLatLng] = useState<{ lat: number; lng: number } | null>(null);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
   const [routingStart, setRoutingStart] = useState<{ name: string; coordinates: { lat: number; lng: number } } | null>(null);
-  const [avoidStairs, setAvoidStairs] = useState(false);
+  const avoidStairs = routingMode === 'accessible';
   const [isRoutingActive, setIsRoutingActive] = useState(false);
   const [geolocationError, setGeolocationError] = useState<string | null>(null);
 
@@ -225,6 +245,7 @@ export default function CampusMap() {
     setIsRoutingActive(false);
     setRouteResult(null);
     setRoutingStart(null);
+    setRoutingMode('walking');
     searchInputRef.current?.blur();
   }, []);
 
@@ -236,8 +257,10 @@ export default function CampusMap() {
     setSelectedBuilding(null); // Clear selection on category filter
   }, []);
 
-  const handleStartRouting = useCallback(async () => {
+  const handleStartRouting = useCallback(async (modeOverride?: 'walking' | 'cycling' | 'accessible') => {
     if (!selectedBuilding) return;
+    const mode = modeOverride || routingMode;
+    if (modeOverride) setRoutingMode(modeOverride);
 
     // Default start point: Geolocation if available, otherwise first major location (SUB)
     let startPoint = routingStart;
@@ -251,9 +274,9 @@ export default function CampusMap() {
       setRoutingStart(startPoint);
     }
 
-    // Pick target: if avoidStairs is enabled and building has wheelchair accessible entrances, route to first entrance
+    // Pick target: if mode is accessible or avoidStairs is enabled and building has entrances, route to first entrance
     let targetCoords = selectedBuilding.coordinates;
-    if (avoidStairs && selectedBuilding.entrances.length > 0) {
+    if ((mode === 'accessible' || avoidStairs) && selectedBuilding.entrances.length > 0) {
       const accessibleEntrance = selectedBuilding.entrances[0];
       targetCoords = { lat: accessibleEntrance.lat, lng: accessibleEntrance.lng };
     }
@@ -261,13 +284,15 @@ export default function CampusMap() {
     setIsRoutingActive(true);
 
     try {
-      const result = await fetchRoute(startPoint.coordinates, targetCoords, { avoidStairs });
+      const result = await fetchRoute(startPoint.coordinates, targetCoords, { 
+        mode,
+        avoidStairs: mode === 'accessible' || avoidStairs 
+      });
       setRouteResult(result);
-      // Zoom out to show the full route
     } catch (e) {
       console.error('Routing failed:', e);
     }
-  }, [selectedBuilding, routingStart, userLatLng, avoidStairs]);
+  }, [selectedBuilding, routingStart, userLatLng, routingMode, avoidStairs]);
 
   const handleCloseCard = useCallback(() => {
     setSelectedBuilding(null);
@@ -312,21 +337,6 @@ export default function CampusMap() {
             />
           )}
 
-          {/* Footprint Polygon Overlay */}
-          {selectedBuilding?.footprint && (
-            <GeoJSON
-              key={`footprint-${selectedBuilding.id}`}
-              data={selectedBuilding.footprint as any}
-              style={{
-                fillColor: '#CC0000',
-                fillOpacity: 0.25,
-                color: '#CC0000',
-                weight: 2.5,
-                dashArray: '3',
-              }}
-            />
-          )}
-
           {/* Navigation Polyline Route */}
           {routeResult && (
             <Polyline
@@ -349,39 +359,85 @@ export default function CampusMap() {
           <MapController center={mapCenter} />
           <ZoomTracker onZoomChange={setZoomLevel} />
 
-          {/* Marker Cluster */}
-          <MarkerClusterGroup
-            chunkedLoading
-            iconCreateFunction={createClusterCustomIcon}
-            maxClusterRadius={80}
-            showCoverageOnHover={false}
-          >
-            {buildings
-              .filter((b) => selectedCategories[b.category] !== false)
-              .filter((b) => zoomLevel >= 16 || isMajorBuilding(b) || selectedBuilding?.id === b.id)
-              .map((building) => {
-                const isSelected = selectedBuilding?.id === building.id;
-                // Fetch colors from categories
-                let color = '#CC0000';
-                if (building.category === 'dining') color = '#F59E0B'; // Orange
-                else if (building.category === 'parking') color = '#10B981'; // Green
-                else if (building.category === 'residence') color = '#EC4899'; // Pink
-                else if (building.category === 'recreation') color = '#3B82F6'; // Blue
-                else if (building.category === 'library') color = '#8B5CF6'; // Purple
-                else if (building.category === 'admin') color = '#6B7280'; // Slate
+          {/* Polygons (Footprints) - only show when zoomed in >= 16 */}
+          {zoomLevel >= 16 && buildings
+            .filter((b) => selectedCategories[b.category] !== false)
+            .map((building) => {
+              const isSelected = selectedBuilding?.id === building.id;
+              // Fetch colors from categories
+              let color = '#CC0000';
+              if (building.category === 'dining') color = '#F59E0B'; // Orange
+              else if (building.category === 'parking') color = '#10B981'; // Green
+              else if (building.category === 'residence') color = '#EC4899'; // Pink
+              else if (building.category === 'recreation') color = '#3B82F6'; // Blue
+              else if (building.category === 'library') color = '#8B5CF6'; // Purple
+              else if (building.category === 'admin') color = '#6B7280'; // Slate
 
-                return (
-                  <Marker
-                    key={building.id}
-                    position={[building.coordinates.lat, building.coordinates.lng]}
-                    icon={createCustomMarker(building.category, color, isSelected)}
-                    eventHandlers={{
-                      click: () => handleBuildingClick(building),
-                    }}
-                  />
-                );
-              })}
-          </MarkerClusterGroup>
+              const showLabel = zoomLevel >= 18 || (zoomLevel >= 16 && isMajorBuilding(building)) || isSelected;
+
+              return (
+                <GeoJSON
+                  key={`footprint-${building.id}-${isSelected ? 'selected' : 'normal'}`}
+                  data={building.footprint as any}
+                  style={{
+                    fillColor: isSelected ? '#CC0000' : color,
+                    fillOpacity: isSelected ? 0.35 : 0.15,
+                    color: isSelected ? '#CC0000' : color,
+                    weight: isSelected ? 3.5 : 1.5,
+                  }}
+                  eventHandlers={{
+                    click: () => handleBuildingClick(building),
+                  }}
+                >
+                  {showLabel && (
+                    <Tooltip
+                      permanent
+                      direction="center"
+                      className="custom-building-label bg-transparent border-none shadow-none text-[8.5px] font-extrabold text-stone-800 dark:text-stone-200 text-center select-none pointer-events-none drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.85)] dark:drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.85)] transition-all duration-300"
+                    >
+                      <div className={isSelected ? 'text-[11.5px] text-primary scale-110 font-black' : ''}>
+                        {getShortLabel(building)}
+                      </div>
+                    </Tooltip>
+                  )}
+                </GeoJSON>
+              );
+            })}
+
+          {/* Marker Cluster (Pins) - only show when zoomed out < 16 */}
+          {zoomLevel < 16 && (
+            <MarkerClusterGroup
+              chunkedLoading
+              iconCreateFunction={createClusterCustomIcon}
+              maxClusterRadius={80}
+              showCoverageOnHover={false}
+            >
+              {buildings
+                .filter((b) => selectedCategories[b.category] !== false)
+                .filter((b) => isMajorBuilding(b) || selectedBuilding?.id === b.id)
+                .map((building) => {
+                  const isSelected = selectedBuilding?.id === building.id;
+                  let color = '#CC0000';
+                  if (building.category === 'dining') color = '#F59E0B'; // Orange
+                  else if (building.category === 'parking') color = '#10B981'; // Green
+                  else if (building.category === 'residence') color = '#EC4899'; // Pink
+                  else if (building.category === 'recreation') color = '#3B82F6'; // Blue
+                  else if (building.category === 'library') color = '#8B5CF6'; // Purple
+                  else if (building.category === 'admin') color = '#6B7280'; // Slate
+
+                  return (
+                    <Marker
+                      key={`marker-${building.id}`}
+                      position={[building.coordinates.lat, building.coordinates.lng]}
+                      icon={createCustomMarker(building.category, color, isSelected)}
+                      eventHandlers={{
+                        click: () => handleBuildingClick(building),
+                      }}
+                    />
+                  );
+                })}
+            </MarkerClusterGroup>
+          )}
         </MapContainer>
 
         {/* Map Control Buttons (Locate / Center) */}
@@ -531,47 +587,143 @@ export default function CampusMap() {
               <div className="w-12 h-1.5 rounded-full bg-stone-300 dark:bg-stone-700 shadow-sm" />
             </div>
 
-            {/* Close Cross button */}
+            {/* Close button */}
             <button
               onClick={handleCloseCard}
-              className="absolute top-4 right-4 z-20 w-7 h-7 bg-black/40 hover:bg-black/60 rounded-full flex items-center justify-center text-white transition-colors"
+              className="absolute top-4 right-4 z-20 w-8 h-8 bg-black/40 hover:bg-black/60 rounded-full flex items-center justify-center text-white transition-colors"
             >
-              <X size={15} />
+              <X size={16} />
             </button>
 
-            <div className="overflow-y-auto hide-scrollbar pb-6 pt-5 md:pt-0">
-              {/* Detailed Cover Card */}
-              <div className="p-5 pb-3 border-b border-border/40 bg-muted/20">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary/10 text-primary uppercase">
-                    {selectedBuilding.category}
-                  </span>
-                  {selectedBuilding.officialNumber && selectedBuilding.officialNumber !== 'N/A' && (
-                    <span className="text-[10px] text-muted-foreground font-bold bg-muted px-2 py-0.5 rounded-md">
-                      Bldg #{selectedBuilding.officialNumber}
-                    </span>
-                  )}
+            {/* Image Banner */}
+            <div className="relative h-44 w-full bg-stone-100 dark:bg-stone-900 overflow-hidden">
+              {selectedBuilding.photos && selectedBuilding.photos.length > 0 ? (
+                <img
+                  src={selectedBuilding.photos[0]}
+                  alt={selectedBuilding.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-gradient-to-br from-primary/5 to-primary/10">
+                  <Building2 size={48} className="text-primary/20 mb-2" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary/40">Lumisync Campus Map</span>
                 </div>
-                <h2 className="text-xl font-bold leading-tight">{selectedBuilding.name}</h2>
+              )}
+              {/* Category overlay */}
+              <div className="absolute bottom-3 left-4 flex gap-1.5 items-center">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground uppercase shadow-sm">
+                  {selectedBuilding.category}
+                </span>
                 {selectedBuilding.abbreviation && (
-                  <p className="text-xs text-muted-foreground mt-1">Abbreviation: <span className="font-bold">{selectedBuilding.abbreviation}</span></p>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-black/60 text-white uppercase shadow-sm">
+                    {selectedBuilding.abbreviation}
+                  </span>
                 )}
+              </div>
+            </div>
+
+            <div className="overflow-y-auto hide-scrollbar pb-6 flex-1">
+              {/* Header Title Details */}
+              <div className="p-5 pb-3 border-b border-border/40">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-extrabold leading-tight text-foreground">{selectedBuilding.name}</h2>
+                    {selectedBuilding.officialNumber && selectedBuilding.officialNumber !== 'N/A' && (
+                      <p className="text-xs text-muted-foreground mt-0.5">Building #{selectedBuilding.officialNumber}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action buttons (Favorites, Share, Google Maps) */}
+              <div className="px-5 py-3 border-b border-border/40 flex justify-around gap-2 bg-muted/10">
+                {/* Favorite */}
+                <button
+                  onClick={() => dispatch({ type: 'TOGGLE_FAVORITE_BUILDING', buildingId: selectedBuilding.id })}
+                  className="flex flex-col items-center gap-1 group"
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+                    state.favoriteBuildings?.includes(selectedBuilding.id)
+                      ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                      : 'bg-white dark:bg-card border-border hover:bg-stone-50 text-muted-foreground'
+                  }`}>
+                    <Heart size={18} className={state.favoriteBuildings?.includes(selectedBuilding.id) ? 'fill-rose-500' : ''} />
+                  </div>
+                  <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground">
+                    {state.favoriteBuildings?.includes(selectedBuilding.id) ? 'Saved' : 'Favorite'}
+                  </span>
+                </button>
+
+                {/* Share Link */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/detail/building/${selectedBuilding.id}`);
+                    setCopiedLink(true);
+                    setTimeout(() => setCopiedLink(false), 2000);
+                  }}
+                  className="flex flex-col items-center gap-1 group"
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+                    copiedLink
+                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+                      : 'bg-white dark:bg-card border-border hover:bg-stone-50 text-muted-foreground'
+                  }`}>
+                    {copiedLink ? <Check size={18} /> : <Share2 size={18} />}
+                  </div>
+                  <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground">
+                    {copiedLink ? 'Copied' : 'Copy Link'}
+                  </span>
+                </button>
+
+                {/* Open in Google Maps */}
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${selectedBuilding.coordinates.lat},${selectedBuilding.coordinates.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-1 group"
+                >
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center border bg-white dark:bg-card border-border hover:bg-stone-50 text-muted-foreground transition-all">
+                    <ExternalLink size={18} />
+                  </div>
+                  <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground">Maps</span>
+                </a>
               </div>
 
               <div className="px-5 pt-4 space-y-5">
-                {/* Directions trigger panel */}
+                {/* Directions Modes Tabs */}
                 {!isRoutingActive ? (
-                  <button
-                    onClick={handleStartRouting}
-                    className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold text-sm hover:bg-primary/95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/10 active:scale-98"
-                  >
-                    <Navigation2 size={16} className="fill-primary-foreground" />
-                    Get Walking Directions
-                  </button>
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Directions Mode</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        onClick={() => handleStartRouting('walking')}
+                        className="py-2.5 bg-primary/5 hover:bg-primary/10 border border-primary/10 rounded-xl font-bold text-xs text-primary transition-all flex flex-col items-center justify-center gap-1"
+                      >
+                        <Navigation2 size={15} />
+                        <span>Walk</span>
+                      </button>
+                      <button
+                        onClick={() => handleStartRouting('cycling')}
+                        className="py-2.5 bg-primary/5 hover:bg-primary/10 border border-primary/10 rounded-xl font-bold text-xs text-primary transition-all flex flex-col items-center justify-center gap-1"
+                      >
+                        <Bike size={15} />
+                        <span>Cycle</span>
+                      </button>
+                      <button
+                        onClick={() => handleStartRouting('accessible')}
+                        className="py-2.5 bg-primary/5 hover:bg-primary/10 border border-primary/10 rounded-xl font-bold text-xs text-primary transition-all flex flex-col items-center justify-center gap-1"
+                      >
+                        <Info size={15} />
+                        <span>Accessible</span>
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <div className="bg-muted/40 p-4 rounded-xl space-y-3.5 border border-border/30">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-foreground">Directions Settings</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-foreground">Route details ({routingMode})</span>
+                      </div>
                       <button onClick={() => setIsRoutingActive(false)} className="text-[10px] font-bold text-primary hover:underline">Cancel</button>
                     </div>
 
@@ -586,31 +738,20 @@ export default function CampusMap() {
                             setRoutingStart({ name: 'My Location', coordinates: userLatLng });
                           } else {
                             const found = majorStartLocations.find((l) => l.name === val);
-                            if (found) setRoutingStart({ name: found.name, coordinates: found.coordinates });
+                            if (found) {
+                              setRoutingStart({ name: found.name, coordinates: found.coordinates });
+                              // Re-trigger routing calculation
+                              setTimeout(() => handleStartRouting(routingMode), 50);
+                            }
                           }
                         }}
-                        className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-card border border-border rounded-lg outline-none font-semibold"
+                        className="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-card border border-border rounded-lg outline-none font-semibold text-foreground"
                       >
                         {userLatLng && <option value="My Location">My Location (GPS)</option>}
                         {majorStartLocations.map((l) => (
                           <option key={l.id} value={l.name}>{l.name}</option>
                         ))}
                       </select>
-                    </div>
-
-                    {/* Accessible Toggles */}
-                    <div className="flex items-center justify-between pt-1">
-                      <span className="text-xs font-semibold text-muted-foreground">Wheelchair Route (Ramp/Elevator)</span>
-                      <input
-                        type="checkbox"
-                        checked={avoidStairs}
-                        onChange={(e) => {
-                          setAvoidStairs(e.target.checked);
-                          // Re-trigger routing calculation
-                          setTimeout(handleStartRouting, 50);
-                        }}
-                        className="accent-primary w-4 h-4 cursor-pointer"
-                      />
                     </div>
 
                     {/* Route results metrics */}
@@ -635,6 +776,37 @@ export default function CampusMap() {
                   </div>
                 )}
 
+                {/* Contact and Quick Details Grid */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {selectedBuilding.phone && (
+                    <div className="p-3 bg-muted/20 rounded-xl flex items-start gap-2 border border-border/20">
+                      <Phone size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[9px] font-extrabold uppercase text-muted-foreground">Phone</div>
+                        <a href={`tel:${selectedBuilding.phone}`} className="font-semibold text-primary hover:underline">{selectedBuilding.phone}</a>
+                      </div>
+                    </div>
+                  )}
+                  {selectedBuilding.website && (
+                    <div className="p-3 bg-muted/20 rounded-xl flex items-start gap-2 border border-border/20">
+                      <Globe size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[9px] font-extrabold uppercase text-muted-foreground">Website</div>
+                        <a href={selectedBuilding.website} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline truncate block max-w-[120px]">Visit Site</a>
+                      </div>
+                    </div>
+                  )}
+                  {selectedBuilding.email && (
+                    <div className="p-3 bg-muted/20 rounded-xl flex items-start gap-2 border border-border/20 col-span-2">
+                      <Mail size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[9px] font-extrabold uppercase text-muted-foreground">Email</div>
+                        <a href={`mailto:${selectedBuilding.email}`} className="font-semibold text-primary hover:underline">{selectedBuilding.email}</a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* About description */}
                 {selectedBuilding.description && (
                   <div>
@@ -645,23 +817,51 @@ export default function CampusMap() {
                   </div>
                 )}
 
-                {/* Address & Accessibility Cards */}
-                <div className="grid grid-cols-1 gap-2.5">
-                  {selectedBuilding.address && (
-                    <div className="bg-muted/30 px-3.5 py-2.5 rounded-xl text-xs">
-                      <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">Address</div>
-                      <div className="font-semibold text-foreground">{selectedBuilding.address}</div>
-                    </div>
-                  )}
-                  <div className="bg-muted/30 px-3.5 py-2.5 rounded-xl text-xs flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <Info size={14} />
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Accessibility</div>
-                      <div className="font-semibold text-foreground">
-                        {selectedBuilding.accessibility.wheelchairEntrance ? 'Wheelchair Entrance' : 'Standard Entry'} 
-                        {selectedBuilding.accessibility.elevatorAvailable ? ' • Elevators available' : ''}
+                {/* Address & Accessibility Checklist */}
+                <div className="space-y-2">
+                  <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Location & Access</h3>
+                  <div className="bg-muted/30 p-4 rounded-xl space-y-3 text-xs">
+                    {selectedBuilding.address && (
+                      <div className="flex gap-2">
+                        <MapPin size={14} className="text-muted-foreground shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">Address</div>
+                          <div className="font-semibold text-foreground">{selectedBuilding.address}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="border-t border-border/40 pt-2.5 space-y-2.5">
+                      <div className="flex items-start gap-2.5">
+                        <Check size={14} className="text-emerald-500 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">Restrooms</div>
+                          <div className="font-semibold text-foreground">{selectedBuilding.restrooms || 'Accessible public restrooms available.'}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <Check size={14} className="text-emerald-500 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">Elevators</div>
+                          <div className="font-semibold text-foreground">{selectedBuilding.elevators || 'Elevators available.'}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <Check size={14} className="text-emerald-500 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">Bike Racks</div>
+                          <div className="font-semibold text-foreground">{selectedBuilding.bikeRacks || 'Bike racks located nearby.'}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5">
+                        <Check size={14} className="text-emerald-500 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">Emergency Phones</div>
+                          <div className="font-semibold text-foreground">{selectedBuilding.emergencyPhones || 'Emergency phones available.'}</div>
+                        </div>
                       </div>
                     </div>
                   </div>

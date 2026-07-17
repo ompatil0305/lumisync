@@ -85,6 +85,14 @@ export interface Building {
   wheelchairAccessible?: boolean;
   needsReview?: boolean;
   dataSource?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  restrooms?: string;
+  elevators?: string;
+  bikeRacks?: string;
+  emergencyPhones?: string;
+  aedLocations?: string[];
 }
 
 export const buildings: Building[] = [
@@ -101,10 +109,18 @@ export const buildings: Building[] = [
     floors: 4,
     hasParkingNearby: ['flint-ave-garage', 'commuter-north'],
     nearestShuttleStop: 'Student Union Building',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Holden+Hall',
     wheelchairAccessible: true,
     needsReview: false,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-3833',
+    email: 'artsandsciences@ttu.edu',
+    website: 'https://www.depts.ttu.edu/artsandsciences/',
+    restrooms: 'Restrooms available on all floors (accessible)',
+    elevators: 'Elevator located in central corridor',
+    bikeRacks: 'Racks available near East and West entrances',
+    emergencyPhones: 'Emergency blue light phone at East courtyard',
+    aedLocations: ['First floor lobby']
   },
   {
     id: 'admin-building',
@@ -119,10 +135,18 @@ export const buildings: Building[] = [
     floors: 3,
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Administration Building',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Administration+Building',
     wheelchairAccessible: true,
     needsReview: false,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-2121',
+    email: 'president@ttu.edu',
+    website: 'https://www.ttu.edu/administration/',
+    restrooms: 'Restrooms available on floors 1, 2, and 3',
+    elevators: 'Elevator located near West entrance',
+    bikeRacks: 'Racks available at South entrance',
+    emergencyPhones: 'Emergency phone located at North entrance',
+    aedLocations: ['Lobby near President Office']
   },
   {
     id: 'sub',
@@ -138,10 +162,18 @@ export const buildings: Building[] = [
     hasDining: true,
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Student Union Building',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Student+Union+Building',
     wheelchairAccessible: true,
     needsReview: false,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-3636',
+    email: 'sub@ttu.edu',
+    website: 'https://www.depts.ttu.edu/sub/',
+    restrooms: 'Accessible restrooms available on all floors',
+    elevators: 'Passenger elevators located in East and West wings',
+    bikeRacks: 'Racks available at North and South entrances',
+    emergencyPhones: 'Blue light phones available outside North entrance',
+    aedLocations: ['Lobby near Information Desk', 'Second Floor near Ballroom']
   },
   {
     id: 'rawls-college',
@@ -156,10 +188,18 @@ export const buildings: Building[] = [
     floors: 4,
     hasParkingNearby: ['flint-ave-garage', 'commuter-north'],
     nearestShuttleStop: 'Rawls College',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Rawls+College',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-3188',
+    email: 'rawlsgrad@ttu.edu',
+    website: 'https://rawlsbusiness.ttu.edu',
+    restrooms: 'Modern accessible restrooms on all floors',
+    elevators: 'Multiple elevators in central atrium',
+    bikeRacks: 'Covered bike racks at South entrance',
+    emergencyPhones: 'Emergency phone at parking lot circle',
+    aedLocations: ['Atrium near elevators', 'Third floor lobby']
   },
   {
     id: 'english-phil',
@@ -174,10 +214,18 @@ export const buildings: Building[] = [
     floors: 3,
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Student Union Building',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=English+Philosophy+Building',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-2501',
+    email: 'english.gradoffice@ttu.edu',
+    website: 'https://www.depts.ttu.edu/english/',
+    restrooms: 'Restrooms available on floors 1, 2, and 3',
+    elevators: 'Elevator in main lobby',
+    bikeRacks: 'Racks near main courtyard',
+    emergencyPhones: 'Blue light phone in plaza',
+    aedLocations: ['First floor lobby']
   },
   {
     id: 'university-library',
@@ -192,10 +240,18 @@ export const buildings: Building[] = [
     floors: 6,
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'University Library',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=University+Library',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-2265',
+    email: 'library@ttu.edu',
+    website: 'https://www.depts.ttu.edu/library/',
+    restrooms: 'Accessible restrooms on all floors (floors 1-5)',
+    elevators: 'Central elevator bank serving floors 1-5',
+    bikeRacks: 'Large bike parking zone at West entrance',
+    emergencyPhones: 'Blue light phone near main entrance',
+    aedLocations: ['Circulation desk', 'Third floor research area']
   },
   {
     id: 'talkington-hall',
@@ -211,9 +267,18 @@ export const buildings: Building[] = [
     hasDining: true,
     hasParkingNearby: ['commuter-north'],
     nearestShuttleStop: 'Talkington Hall',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Talkington+Hall',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-1420',
+    email: 'housing@ttu.edu',
+    website: 'https://www.depts.ttu.edu/housing/',
+    restrooms: 'Restrooms in lobby area and individual suites',
+    elevators: 'Elevators in East and West towers',
+    bikeRacks: 'Secure racks in Talkington courtyard',
+    emergencyPhones: 'Emergency phone at main entrance courtyard',
+    aedLocations: ['Main front desk']
   },
   {
     id: 'boston-ave',
@@ -228,7 +293,14 @@ export const buildings: Building[] = [
     nearestShuttleStop: 'Student Union Building',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-3811',
+    email: 'parking@ttu.edu',
+    website: 'https://www.depts.ttu.edu/parking/',
+    restrooms: 'Restrooms available inside visitor center',
+    elevators: 'No elevators',
+    bikeRacks: 'Racks nearby at SUB and Holden Hall',
+    emergencyPhones: 'Emergency blue light phones located at lot perimeters'
   },
   {
     id: 'broadway',
@@ -241,7 +313,14 @@ export const buildings: Building[] = [
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Broadway & Akron',
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-2000',
+    email: 'info@ttu.edu',
+    website: 'https://www.ttu.edu',
+    restrooms: 'Public restrooms in local establishments',
+    elevators: 'N/A',
+    bikeRacks: 'Racks located along sidewalks',
+    emergencyPhones: 'City callboxes nearby'
   },
   {
     id: 'jones-stadium',
@@ -253,10 +332,18 @@ export const buildings: Building[] = [
     description: 'Home of Texas Tech Red Raider football since 1947. Jones AT&T Stadium seats over 60,000 fans and is known for its electric game-day atmosphere.',
     hasParkingNearby: ['raider-park-garage'],
     nearestShuttleStop: 'Jones Stadium',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Jones+AT-T+Stadium',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-3355',
+    email: 'athletics@ttu.edu',
+    website: 'https://texastech.com/sports/football',
+    restrooms: 'Large public restrooms throughout concourse',
+    elevators: 'Elevators at West stadium club and East gates',
+    bikeRacks: 'Racks available near Gates 1 and 6',
+    emergencyPhones: 'Emergency phones at security gate entrances',
+    aedLocations: ['First aid stations near Gates 1 and 4']
   },
   {
     id: 'student-rec',
@@ -268,10 +355,18 @@ export const buildings: Building[] = [
     description: 'The Student Recreation Center features fitness equipment, basketball courts, a climbing wall, an indoor pool, group fitness studios, and outdoor adventure programs.',
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Student Recreation Center',
-    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Image+Not+Available',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Student+Rec+Center',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-3351',
+    email: 'fitwell.rec@ttu.edu',
+    website: 'https://www.depts.ttu.edu/recsports/',
+    restrooms: 'Locker rooms and family restrooms available',
+    elevators: 'Elevator serving second floor track and fitness space',
+    bikeRacks: 'Extensive bike racks at North main entrance',
+    emergencyPhones: 'Blue light phone in outdoor leisure pool area',
+    aedLocations: ['Front desk', 'Cardio area second floor']
   },
   {
     id: 'student-health',
@@ -283,9 +378,18 @@ export const buildings: Building[] = [
     description: 'Student Health Services provides comprehensive medical care including primary care, mental health services, immunizations, and wellness programs for enrolled students.',
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Student Union Building',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Student+Wellness+Center',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 743-2848',
+    email: 'studenthealth@ttuhsc.edu',
+    website: 'https://www.depts.ttu.edu/studenthealth/',
+    restrooms: 'Clinical and public restrooms on all floors',
+    elevators: 'Elevator located near main pharmacy lobby',
+    bikeRacks: 'Racks near pharmacy entrance',
+    emergencyPhones: 'Emergency phone in visitor parking lot',
+    aedLocations: ['Triage clinic lobby', 'Pharmacy waiting area']
   },
   {
     id: 'moody-planetarium',
@@ -297,9 +401,18 @@ export const buildings: Building[] = [
     description: 'The Moody Planetarium offers public shows and educational programs about astronomy and space science. Part of the Museum of Texas Tech University complex.',
     hasParkingNearby: ['flint-ave-garage'],
     nearestShuttleStop: 'Museum',
+    photo: 'https://placehold.co/600x400/eeeeee/999999?text=Moody+Planetarium',
     wheelchairAccessible: true,
     needsReview: true,
-    dataSource: 'official-directory'
+    dataSource: 'official-directory',
+    phone: '(806) 742-2442',
+    email: 'museum.education@ttu.edu',
+    website: 'https://www.depts.ttu.edu/museumttu/',
+    restrooms: 'Museum lobby restrooms (accessible)',
+    elevators: 'Elevator serving lower level gallery',
+    bikeRacks: 'Racks at Museum main entrance',
+    emergencyPhones: 'Emergency phone in museum courtyard',
+    aedLocations: ['Museum admissions desk']
   },
 ];
 
