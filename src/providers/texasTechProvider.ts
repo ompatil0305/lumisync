@@ -378,6 +378,7 @@ export const texasTechProvider: UniversityProvider = {
         (b) =>
           b.name.toLowerCase().includes(q) ||
           (b.officialNumber && b.officialNumber !== 'N/A' && b.officialNumber.toLowerCase().includes(q)) ||
+          b.officialNumber.toLowerCase().includes(q) ||
           b.aliases.some((a) => a.toLowerCase().includes(q)) ||
           b.abbreviation?.toLowerCase().includes(q) ||
           b.departments?.some((d) => d.toLowerCase().includes(q))
@@ -387,7 +388,7 @@ export const texasTechProvider: UniversityProvider = {
           id: b.id,
           type: 'building',
           title: b.name,
-          subtitle: (b.abbreviation || (b.officialNumber !== 'N/A' ? b.officialNumber : '')) + (b.departments && b.departments.length > 0 ? ` - ${b.departments[0]}` : ''),
+          subtitle: (b.abbreviation || b.officialNumber) + (b.departments && b.departments.length > 0 ? ` - ${b.departments[0]}` : ''),
           icon: 'Building2',
           coordinates: [b.coordinates.lat, b.coordinates.lng],
           category: b.category,
