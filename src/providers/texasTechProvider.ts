@@ -35,6 +35,7 @@ import {
 
 import { facultyMembers } from '../data/facultyDirectory';
 import { fetchWeather } from '../services/weatherService';
+import ttuCampusJson from '../data/ttu-campus.json';
 
 // ---- University Info ----
 const info: UniversityInfo = {
@@ -51,15 +52,87 @@ const info: UniversityInfo = {
   },
 };
 
-// ---- Data Transformation ----
-// Convert existing data to new provider format with dataSource labels
+// ---- Building ID Mappings ----
+const ID_MAPPING: Record<string, string> = {
+  'student-union-building': 'sub',
+  'texas-tech-student-union-building': 'sub',
+  'rawls-college-of-business': 'rawls-college',
+  'rawls-college-of-business-administration': 'rawls-college',
+  'holden-hall': 'holden-hall',
+  'university-library': 'university-library',
+  'texas-tech-university-library': 'university-library',
+  'administration-building': 'admin-building',
+  'english-philosophy-building': 'english-phil',
+  'english-and-philosophy-building': 'english-phil',
+  'talkington-residence-hall': 'talkington-hall',
+  'talkington-hall': 'talkington-hall',
+  'jones-att-stadium': 'jones-stadium',
+  'student-recreation-center': 'student-rec',
+  'student-wellness-center': 'student-health',
+  'student-health-center': 'student-health',
+  'moody-planetarium': 'moody-planetarium'
+};
 
-function transformBuilding(b: typeof rawBuildings[0]): CampusBuilding {
+// ---- Data Transformation ----
+
+// Merge OSM building footprints and coordinates with local detailed profiles
+const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
+  let targetId = osmB.id;
+  if (ID_MAPPING[osmB.id]) {
+    targetId = ID_MAPPING[osmB.id];
+  } else {
+    for (const key of Object.keys(ID_MAPPING)) {
+      if (osmB.id.includes(key) || key.includes(osmB.id)) {
+        targetId = ID_MAPPING[key];
+        break;
+      }
+    }
+  }
+
+  const rawMatch = rawBuildings.find((r) => r.id === targetId || r.name.toLowerCase() === osmB.name.toLowerCase());
+  
+  // Normalize category mapping
+  let category: CampusBuilding['category'] = osmB.category as any;
+  if (rawMatch?.category) {
+    if (rawMatch.category === 'administrative') category = 'admin';
+    else if (rawMatch.category === 'landmark' || rawMatch.category === 'health' || rawMatch.category === 'museum') category = 'other' as any;
+    else category = rawMatch.category as any;
+  }
+
+  if (category === 'administrative' as any) category = 'admin';
+  if (!['academic', 'dining', 'parking', 'residence', 'recreation', 'library', 'admin', 'other'].includes(category)) {
+    category = 'other' as any;
+  }
+
   return {
-    ...b,
-    dataSource: 'official-directory',
+    id: rawMatch?.id || targetId,
+    officialNumber: osmB.officialNumber || 'N/A',
+    name: rawMatch?.name || osmB.name,
+    aliases: Array.from(new Set([...(osmB.aliases || []), ...(rawMatch?.aliases || [])])),
+    category,
+    coordinates: osmB.coordinates,
+    footprint: osmB.footprint,
+    entrances: osmB.entrances || [],
+    hours: osmB.hours || {},
+    accessibility: {
+      wheelchairEntrance: osmB.accessibility?.wheelchairEntrance ?? rawMatch?.wheelchairAccessible ?? true,
+      elevatorAvailable: osmB.accessibility?.elevatorAvailable ?? true,
+    },
+    photos: rawMatch?.photo ? [rawMatch.photo] : [],
+    
+    // Optional detailed parameters
+    abbreviation: rawMatch?.abbreviation || osmB.abbreviation,
+    departments: rawMatch?.departments,
+    address: rawMatch?.address || osmB.address,
+    description: rawMatch?.description || osmB.description,
+    floors: rawMatch?.floors || osmB.floors,
+    hasDining: rawMatch?.hasDining || osmB.hasDining,
+    hasParkingNearby: rawMatch?.hasParkingNearby,
+    nearestShuttleStop: rawMatch?.nearestShuttleStop,
+    website: undefined,
+    dataSource: 'official-directory'
   };
-}
+});
 
 function transformDining(d: typeof rawDining[0]): DiningVenue {
   return {
@@ -114,7 +187,6 @@ function transformAlert(a: typeof rawAlerts[0]): CampusAlert {
 }
 
 // ---- Cached Data ----
-const buildings = rawBuildings.map(transformBuilding);
 const diningVenues = rawDining.map(transformDining);
 const parkingLots = rawParking.map(transformParking);
 const shuttleRoutes = rawShuttle.map(transformShuttle);
@@ -142,11 +214,14 @@ export const texasTechProvider: UniversityProvider = {
   },
 
   async searchBuildings(query: string) {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
+    if (!q) return [];
     return buildings.filter(
       (b) =>
         b.name.toLowerCase().includes(q) ||
-        b.abbreviation.toLowerCase().includes(q) ||
+        b.officialNumber.toLowerCase().includes(q) ||
+        b.aliases.some((a) => a.toLowerCase().includes(q)) ||
+        b.abbreviation?.toLowerCase().includes(q) ||
         b.departments?.some((d) => d.toLowerCase().includes(q)) ||
         b.description?.toLowerCase().includes(q) ||
         b.address?.toLowerCase().includes(q)
@@ -274,7 +349,9 @@ export const texasTechProvider: UniversityProvider = {
       .filter(
         (b) =>
           b.name.toLowerCase().includes(q) ||
-          b.abbreviation.toLowerCase().includes(q) ||
+          b.officialNumber.toLowerCase().includes(q) ||
+          b.aliases.some((a) => a.toLowerCase().includes(q)) ||
+          b.abbreviation?.toLowerCase().includes(q) ||
           b.departments?.some((d) => d.toLowerCase().includes(q))
       )
       .forEach((b) =>
@@ -282,11 +359,11 @@ export const texasTechProvider: UniversityProvider = {
           id: b.id,
           type: 'building',
           title: b.name,
-          subtitle: b.abbreviation + (b.departments ? ` - ${b.departments[0]}` : ''),
+          subtitle: (b.abbreviation || b.officialNumber) + (b.departments && b.departments.length > 0 ? ` - ${b.departments[0]}` : ''),
           icon: 'Building2',
-          coordinates: b.coordinates,
+          coordinates: [b.coordinates.lat, b.coordinates.lng],
           category: b.category,
-          dataSource: b.dataSource,
+          dataSource: b.dataSource || 'official-directory',
         })
       );
 
