@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { parkingLots, buildings } from '../../data/universityProfile';
+import { parkingLots } from '../../data/universityProfile';
+import { useBuildings } from '../../hooks/useUniversity';
 import { Car, ChevronLeft, Navigation, Info } from 'lucide-react';
 
 const filters = ['All', 'Commuter', 'Resident', 'Garage', 'Visitor'];
@@ -9,6 +10,7 @@ export default function ParkingScreen() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
+  const { data: buildings = [] } = useBuildings();
 
   const filtered = parkingLots.filter(l => activeFilter === 'All' ? true : l.category === activeFilter.toLowerCase());
 
@@ -65,7 +67,7 @@ export default function ParkingScreen() {
             className="w-full bg-muted rounded-lg px-3 py-2 text-sm outline-none"
           >
             <option value="">Select a building...</option>
-            {buildings.filter(b => b.category === 'academic' || b.category === 'administrative').map(b => (
+            {buildings.filter(b => b.category === 'academic' || b.category === 'admin').map(b => (
               <option key={b.id} value={b.id}>{b.name}</option>
             ))}
           </select>
