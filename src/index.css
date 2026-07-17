@@ -28,7 +28,7 @@
     --card-foreground: 28 25 23;
     --popover: 255 255 255;
     --popover-foreground: 28 25 23;
-    --primary: 28 25 23;               /* Stone-900 / Charcoal */
+    --primary: 204 0 0;               /* Texas Tech Red */
     --primary-foreground: 255 255 255;
     --secondary: 245 245 244;          /* Stone-100 */
     --secondary-foreground: 28 25 23;
@@ -79,8 +79,8 @@
     --card-foreground: 250 250 249;
     --popover: 28 27 26;
     --popover-foreground: 250 250 249;
-    --primary: 250 250 249;            /* White primary in dark */
-    --primary-foreground: 20 20 19;
+    --primary: 255 69 58;              /* Vibrant Red in dark */
+    --primary-foreground: 255 255 255;
     --secondary: 36 35 34;             /* Slightly lighter */
     --secondary-foreground: 250 250 249;
     --muted: 36 35 34;
