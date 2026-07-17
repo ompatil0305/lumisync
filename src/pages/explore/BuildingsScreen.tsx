@@ -12,7 +12,7 @@ export default function BuildingsScreen() {
     b.name.toLowerCase().includes(query.toLowerCase()) ||
     b.abbreviation?.toLowerCase().includes(query.toLowerCase()) ||
     b.departments?.some(d => d.toLowerCase().includes(query.toLowerCase())) ||
-    b.officialNumber.toLowerCase().includes(query.toLowerCase())
+    (b.officialNumber && b.officialNumber !== 'N/A' && b.officialNumber.toLowerCase().includes(query.toLowerCase()))
   );
 
   const categories = ['academic', 'dining', 'parking', 'residence', 'recreation', 'library', 'admin', 'other'] as const;
