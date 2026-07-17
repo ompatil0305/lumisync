@@ -11,7 +11,7 @@ export default function Logo({
   className = '',
   light = false,
 }: LogoProps) {
-  const blueColor = "rgb(29,78,216)"; // Deep Blue #1D4ED8
+  const blueColor = "rgb(var(--uni-primary, 204 0 0))";
   const stoneColor = light ? "#FAFAF9" : "currentColor";
 
   const icon = (
