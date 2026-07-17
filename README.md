@@ -265,8 +265,8 @@ Future:
 
 ## Version 1
 
-- ✅ Interactive Campus Map
-- ✅ Search
+- ✅ Interactive Campus Map (TTU OSM footprints & outdoor pedestrian routing)
+- ✅ Search (Fuzzy alias/number searching)
 - ✅ Home Dashboard
 - ✅ Weather
 - ✅ Parking

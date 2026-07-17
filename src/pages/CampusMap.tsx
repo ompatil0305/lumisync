@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { MapContainer, TileLayer, Marker, Polyline, GeoJSON, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import { useBuildings, useMapCategories, useUniversityInfo } from '../hooks/useUniversity';
+import { useBuildings, useUniversityInfo } from '../hooks/useUniversity';
 import type { CampusBuilding } from '../providers/types';
 import {
   Search, X, Building2, GraduationCap, Home, BookOpen,
