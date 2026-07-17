@@ -40,9 +40,9 @@ export default function BottomNav() {
               }`}
             >
               <div className="relative p-1">
-                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} className={isActive && tab.key === 'lumi' ? 'text-[--lumi-accent]' : ''} />
+                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                 {tab.key === 'lumi' && (
-                  <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[--lumi-accent] border-2 border-background animate-pulse" />
+                  <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-blue-600 border-2 border-background animate-pulse" />
                 )}
               </div>
               <span className={`text-[10px] font-medium tracking-wide ${isActive ? 'font-bold' : ''}`}>
