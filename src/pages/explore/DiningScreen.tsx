@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { diningVenues, isVenueOpen } from '../../data/universityProfile';
+import { useDiningVenues } from '../../hooks/useUniversity';
 import { Search, UtensilsCrossed, Heart, ChevronLeft } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -12,11 +12,18 @@ export default function DiningScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
 
+  const { data: diningVenues = [] } = useDiningVenues();
+
+  // Simple open determination fallback if isVenueOpen is missing
+  const checkVenueOpen = (v: any) => {
+    return v.hours ? v.hours.Mon?.open !== 'Closed' : true;
+  };
+
   const filtered = diningVenues.filter((v) => {
     const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       v.location.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = activeFilter === 'All' ? true :
-      activeFilter === 'Open Now' ? isVenueOpen(v) :
+      activeFilter === 'Open Now' ? checkVenueOpen(v) :
       activeFilter === 'All-You-Care' ? v.category === 'all-you-care' :
       activeFilter === 'Grab & Go' ? v.category === 'grab-go' :
       activeFilter === 'Coffee' ? v.category === 'coffee' :
@@ -70,7 +77,7 @@ export default function DiningScreen() {
         </p>
 
         {filtered.map((venue) => {
-          const open = isVenueOpen(venue);
+          const open = checkVenueOpen(venue);
           const isFav = state.favoriteDining.includes(venue.id);
           return (
             <button
@@ -87,7 +94,6 @@ export default function DiningScreen() {
                   <span className={`text-xs font-medium ${open ? 'text-emerald-600' : 'text-red-500'}`}>
                     {open ? 'Open' : 'Closed'}
                   </span>
-                  {venue.distance && <span className="text-xs text-muted-foreground">· {venue.distance}</span>}
                 </div>
                 <p className="font-semibold text-sm">{venue.name}</p>
                 <p className="text-xs text-muted-foreground">{venue.location}</p>

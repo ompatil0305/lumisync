@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { campusEvents } from '../../data/universityProfile';
+import { useEvent } from '../../hooks/useUniversity';
 import { ChevronLeft, CalendarDays, Clock, MapPin, Sparkles, Share2, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -7,7 +7,16 @@ export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
-  const event = campusEvents.find(e => e.id === id);
+  
+  const { data: event, isLoading } = useEvent(id || '');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!event) {
     return (

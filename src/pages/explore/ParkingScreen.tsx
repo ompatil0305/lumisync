@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { parkingLots } from '../../data/universityProfile';
-import { useBuildings } from '../../hooks/useUniversity';
+import { useBuildings, useParkingLots } from '../../hooks/useUniversity';
 import { Car, ChevronLeft, Navigation, Info } from 'lucide-react';
 
 const filters = ['All', 'Commuter', 'Resident', 'Garage', 'Visitor'];
@@ -11,6 +10,7 @@ export default function ParkingScreen() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
   const { data: buildings = [] } = useBuildings();
+  const { data: parkingLots = [] } = useParkingLots();
 
   const filtered = parkingLots.filter(l => activeFilter === 'All' ? true : l.category === activeFilter.toLowerCase());
 

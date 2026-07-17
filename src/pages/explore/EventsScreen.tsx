@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { campusEvents } from '../../data/universityProfile';
+import { useEvents } from '../../hooks/useUniversity';
 import { CalendarDays, Search, ChevronLeft, Sparkles, MapPin, Clock } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -12,6 +12,8 @@ export default function EventsScreen() {
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+
+  const { data: campusEvents = [] } = useEvents();
 
   const filtered = campusEvents.filter(e => {
     const matchesSearch = e.title.toLowerCase().includes(query.toLowerCase()) ||

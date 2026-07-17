@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { studentOrgs } from '../../data/universityProfile';
+import { useOrganizations } from '../../hooks/useUniversity';
 import { Users, Search, ChevronLeft, Heart, Users2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -11,6 +11,8 @@ export default function OrgsScreen() {
   const { state, dispatch } = useApp();
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+
+  const { data: studentOrgs = [] } = useOrganizations();
 
   const filtered = studentOrgs.filter(o => {
     const matchesSearch = o.name.toLowerCase().includes(query.toLowerCase()) ||

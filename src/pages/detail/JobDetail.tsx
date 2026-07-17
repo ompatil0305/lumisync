@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { campusJobs } from '../../data/universityProfile';
+import { useJob } from '../../hooks/useUniversity';
 import { ChevronLeft, Briefcase, MapPin, Clock, DollarSign, ExternalLink, Heart, Calendar, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -7,7 +7,16 @@ export default function JobDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
-  const job = campusJobs.find(j => j.id === id);
+  
+  const { data: job, isLoading } = useJob(id || '');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!job) {
     return (

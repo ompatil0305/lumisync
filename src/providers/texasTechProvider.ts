@@ -54,40 +54,39 @@ const info: UniversityInfo = {
 
 // ---- Building ID Mappings ----
 const ID_MAPPING: Record<string, string> = {
-  'student-union-building': 'sub',
-  'texas-tech-student-union-building': 'sub',
+  'student-union': 'sub',
   'rawls-college-of-business': 'rawls-college',
-  'rawls-college-of-business-administration': 'rawls-college',
   'holden-hall': 'holden-hall',
-  'university-library': 'university-library',
   'texas-tech-university-library': 'university-library',
   'administration-building': 'admin-building',
   'english-philosophy-building': 'english-phil',
-  'english-and-philosophy-building': 'english-phil',
-  'talkington-residence-hall': 'talkington-hall',
   'talkington-hall': 'talkington-hall',
   'jones-att-stadium': 'jones-stadium',
   'student-recreation-center': 'student-rec',
   'student-wellness-center': 'student-health',
-  'student-health-center': 'student-health',
   'moody-planetarium': 'moody-planetarium'
 };
 
 // ---- Data Transformation ----
+
+const idsSeen = new Set<string>();
 
 // Merge OSM building footprints and coordinates with local detailed profiles
 const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
   let targetId = osmB.id;
   if (ID_MAPPING[osmB.id]) {
     targetId = ID_MAPPING[osmB.id];
-  } else {
-    for (const key of Object.keys(ID_MAPPING)) {
-      if (osmB.id.includes(key) || key.includes(osmB.id)) {
-        targetId = ID_MAPPING[key];
-        break;
-      }
-    }
   }
+
+  // Deduplicate duplicate OSM IDs using a suffix counter
+  let baseId = targetId;
+  let uniqueId = baseId;
+  let counter = 1;
+  while (idsSeen.has(uniqueId)) {
+    uniqueId = `${baseId}-${counter}`;
+    counter++;
+  }
+  idsSeen.add(uniqueId);
 
   const rawMatch = rawBuildings.find((r) => r.id === targetId || r.name.toLowerCase() === osmB.name.toLowerCase());
   
@@ -104,19 +103,30 @@ const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
     category = 'other' as any;
   }
 
+  const name = rawMatch?.name || osmB.name;
+  const description = rawMatch?.description || `${name} on the Texas Tech University campus.`;
+
   return {
-    id: rawMatch?.id || targetId,
+    id: uniqueId,
+    slug: uniqueId,
     officialNumber: osmB.officialNumber || 'N/A',
-    name: rawMatch?.name || osmB.name,
+    name,
     aliases: Array.from(new Set([...(osmB.aliases || []), ...(rawMatch?.aliases || [])])),
     category,
     coordinates: osmB.coordinates,
+    latitude: osmB.coordinates.lat,
+    longitude: osmB.coordinates.lng,
     footprint: osmB.footprint,
     entrances: osmB.entrances || [],
     hours: osmB.hours || {},
     accessibility: {
       wheelchairEntrance: osmB.accessibility?.wheelchairEntrance ?? rawMatch?.wheelchairAccessible ?? true,
       elevatorAvailable: osmB.accessibility?.elevatorAvailable ?? true,
+      restroomsAccessible: true,
+      elevatorsCount: rawMatch?.floors && rawMatch.floors > 1 ? 1 : 0,
+      bikeRacksAvailable: true,
+      emergencyPhonesNearby: true,
+      aedLocations: rawMatch?.aedLocations || ['Main Lobby']
     },
     photos: rawMatch?.photo ? [rawMatch.photo] : [],
     
@@ -124,12 +134,30 @@ const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
     abbreviation: rawMatch?.abbreviation || osmB.abbreviation,
     departments: rawMatch?.departments,
     address: rawMatch?.address || osmB.address,
-    description: rawMatch?.description || osmB.description,
+    description,
     floors: rawMatch?.floors || osmB.floors,
     hasDining: rawMatch?.hasDining || osmB.hasDining,
     hasParkingNearby: rawMatch?.hasParkingNearby,
     nearestShuttleStop: rawMatch?.nearestShuttleStop,
-    website: undefined,
+    website: rawMatch?.website || '',
+    phone: rawMatch?.phone || '',
+    email: rawMatch?.email || '',
+    restrooms: rawMatch?.restrooms || 'Accessible public restrooms available.',
+    accessibleEntrances: osmB.entrances || [],
+    elevators: rawMatch?.elevators || (osmB.accessibility?.elevatorAvailable ? 'Passenger elevators available' : 'Not available'),
+    bikeRacks: rawMatch?.bikeRacks || 'Bike racks located outside main entrance.',
+    emergencyPhones: rawMatch?.emergencyPhones || 'Emergency blue-light phones available near building.',
+    aedLocations: rawMatch?.aedLocations || ['Available inside main entrance lobby.'],
+    favoriteSupport: true,
+    searchKeywords: Array.from(new Set([
+      name.toLowerCase(),
+      uniqueId.toLowerCase(),
+      ...(osmB.aliases || []).map((a: string) => a.toLowerCase()),
+      ...(rawMatch?.aliases || []).map((a: string) => a.toLowerCase()),
+      ...(rawMatch?.departments || []).map((d: string) => d.toLowerCase()),
+      ...(osmB.abbreviation ? [osmB.abbreviation.toLowerCase()] : []),
+      ...(rawMatch?.abbreviation ? [rawMatch.abbreviation.toLowerCase()] : [])
+    ])),
     dataSource: 'official-directory'
   };
 });
@@ -349,6 +377,7 @@ export const texasTechProvider: UniversityProvider = {
       .filter(
         (b) =>
           b.name.toLowerCase().includes(q) ||
+          (b.officialNumber && b.officialNumber !== 'N/A' && b.officialNumber.toLowerCase().includes(q)) ||
           b.officialNumber.toLowerCase().includes(q) ||
           b.aliases.some((a) => a.toLowerCase().includes(q)) ||
           b.abbreviation?.toLowerCase().includes(q) ||

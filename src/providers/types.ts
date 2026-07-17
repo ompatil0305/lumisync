@@ -54,18 +54,29 @@ export type BuildingCategory =
 
 export interface CampusBuilding {
   id: string;
+  slug: string;
   officialNumber: string;
   name: string;
   aliases: string[];
   category: BuildingCategory;
   coordinates: { lat: number; lng: number };
+  latitude: number;
+  longitude: number;
   footprint?: {
     type: 'Polygon';
     coordinates: number[][][];
   };
   entrances: { lat: number; lng: number; label?: string }[];
   hours?: { [key: string]: { open: string; close: string } };
-  accessibility: { wheelchairEntrance: boolean; elevatorAvailable: boolean };
+  accessibility: {
+    wheelchairEntrance: boolean;
+    elevatorAvailable: boolean;
+    restroomsAccessible?: boolean;
+    elevatorsCount?: number;
+    bikeRacksAvailable?: boolean;
+    emergencyPhonesNearby?: boolean;
+    aedLocations?: string[];
+  };
   photos?: string[];
   
   // Optional metadata from directory details
@@ -79,6 +90,16 @@ export interface CampusBuilding {
   hasParkingNearby?: string[];
   nearestShuttleStop?: string;
   website?: string;
+  phone?: string;
+  email?: string;
+  restrooms?: string;
+  accessibleEntrances?: { lat: number; lng: number; label?: string }[];
+  elevators?: string;
+  bikeRacks?: string;
+  emergencyPhones?: string;
+  aedLocations?: string[];
+  favoriteSupport?: boolean;
+  searchKeywords?: string[];
   dataSource?: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
 }
 
