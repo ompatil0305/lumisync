@@ -15,33 +15,10 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { fetchRoute, type RouteResult } from '../services/routingService';
 
-// Custom SVG marker generator helper
-function getCategoryIconSvg(category: string) {
-  switch (category) {
-    case 'academic':
-      return '<path d="M22 10v6M2 10l10-5 10 5-10 5zM6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    case 'dining':
-      return '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v8c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2zM19 15v7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    case 'parking':
-      return '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2M7 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    case 'residence':
-      return '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    case 'recreation':
-      return '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 0-4 4v3a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    case 'library':
-      return '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    case 'admin':
-      return '<path d="M20 22V8M4 22V4c0-.5.2-1 .6-1.4C5 2.2 5.5 2 6 2h8c.5 0 1 .2 1.4.6.4.4.6.9.6 1.4v18M12 6h2M12 10h2M12 14h2M12 18h2M6 6h2M6 10h2M6 14h2M6 18h2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    default:
-      return '<path d="M3 22h18M6 18v-4M10 18v-4M14 18v-4M18 18v-4M12 2 2 7h20zM5 11h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-  }
-}
-
-function createCustomMarker(category: string, color: string, isSelected: boolean) {
+// Custom SVG marker generator
+function createCustomMarker(color: string, isSelected: boolean) {
   const size = isSelected ? 40 : 30;
   const borderWidth = isSelected ? 3.5 : 2.5;
-  const iconSize = size * 0.28;
-  const iconSvg = getCategoryIconSvg(category);
   const svg = `
     <svg width="${size}" height="${size + 8}" viewBox="0 0 ${size} ${size + 8}" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -59,6 +36,7 @@ function createCustomMarker(category: string, color: string, isSelected: boolean
       <svg x="${size/2 - iconSize/2}" y="${size * 0.42 - iconSize/2}" width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" style="color: ${color};">
         ${iconSvg}
       </svg>
+      <circle cx="${size/2}" cy="${size * 0.42}" r="${size * 0.16}" fill="white"/>
     </svg>
   `;
   return L.divIcon({
@@ -353,7 +331,7 @@ export default function CampusMap() {
           <MarkerClusterGroup
             chunkedLoading
             iconCreateFunction={createClusterCustomIcon}
-            maxClusterRadius={80}
+            maxClusterRadius={45}
             showCoverageOnHover={false}
           >
             {buildings
@@ -374,7 +352,7 @@ export default function CampusMap() {
                   <Marker
                     key={building.id}
                     position={[building.coordinates.lat, building.coordinates.lng]}
-                    icon={createCustomMarker(building.category, color, isSelected)}
+                    icon={createCustomMarker(color, isSelected)}
                     eventHandlers={{
                       click: () => handleBuildingClick(building),
                     }}
@@ -469,9 +447,7 @@ export default function CampusMap() {
                           <div className="text-sm font-bold truncate text-foreground">{b.name}</div>
                           <div className="text-xs text-muted-foreground truncate mt-0.5 flex items-center gap-1.5">
                             <span className="font-semibold bg-muted-foreground/15 px-1 py-0.2 rounded text-[10px]">{b.abbreviation || 'TTU'}</span>
-                            {b.officialNumber && b.officialNumber !== 'N/A' && (
-                              <span>• Bldg #{b.officialNumber}</span>
-                            )}
+                            <span>• Bldg #{b.officialNumber}</span>
                           </div>
                         </div>
                       </button>
@@ -546,11 +522,9 @@ export default function CampusMap() {
                   <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary/10 text-primary uppercase">
                     {selectedBuilding.category}
                   </span>
-                  {selectedBuilding.officialNumber && selectedBuilding.officialNumber !== 'N/A' && (
-                    <span className="text-[10px] text-muted-foreground font-bold bg-muted px-2 py-0.5 rounded-md">
-                      Bldg #{selectedBuilding.officialNumber}
-                    </span>
-                  )}
+                  <span className="text-[10px] text-muted-foreground font-bold bg-muted px-2 py-0.5 rounded-md">
+                    Bldg #{selectedBuilding.officialNumber}
+                  </span>
                 </div>
                 <h2 className="text-xl font-bold leading-tight">{selectedBuilding.name}</h2>
                 {selectedBuilding.abbreviation && (
