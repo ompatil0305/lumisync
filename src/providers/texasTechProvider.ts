@@ -113,7 +113,7 @@ const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
     coordinates: osmB.coordinates,
     footprint: osmB.footprint,
     entrances: osmB.entrances || [],
-    hours: rawMatch?.hours || {},
+    hours: osmB.hours || {},
     accessibility: {
       wheelchairEntrance: osmB.accessibility?.wheelchairEntrance ?? rawMatch?.wheelchairAccessible ?? true,
       elevatorAvailable: osmB.accessibility?.elevatorAvailable ?? true,
@@ -129,7 +129,7 @@ const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
     hasDining: rawMatch?.hasDining || osmB.hasDining,
     hasParkingNearby: rawMatch?.hasParkingNearby,
     nearestShuttleStop: rawMatch?.nearestShuttleStop,
-    website: rawMatch?.website,
+    website: undefined,
     dataSource: 'official-directory'
   };
 });
