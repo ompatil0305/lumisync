@@ -1,7 +1,7 @@
 {
   "name": "Lumisync",
   "short_name": "Lumisync",
-  "description": "Your AI-powered campus companion. Explore dining, events, maps, jobs, and more — synced to your campus.",
+  "description": "Lumisync is the AI-Powered Campus Operating System. Explore dining, events, maps, jobs, and more — synced to your campus.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
