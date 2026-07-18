@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Pages
 import Home from './pages/Home';
@@ -118,6 +119,7 @@ export default function App() {
       <AppProvider>
         {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
         {!showSplash && <AppContent />}
+        <SpeedInsights />
       </AppProvider>
     </QueryClientProvider>
   );
