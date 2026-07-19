@@ -14,7 +14,7 @@ class Document(Base):
 
     id = Column(String, primary_key=True)
     content = Column(String, nullable=False)
-    embedding = Column(Vector(1536))  # OpenAI text-embedding-3-small dimension
+    embedding = Column(Vector(768))  # Gemini text-embedding-004 dimension
     metadata_ = Column('metadata', JSONB)
 
     # Add an HNSW index for fast vector search

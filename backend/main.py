@@ -15,6 +15,16 @@ app = FastAPI(
     version=settings.APP_VERSION,
 )
 
+@app.on_event("startup")
+def startup_event():
+    from services.vector_service import VectorService
+    try:
+        vector_service = VectorService()
+        vector_service.init_db()
+        logger.info("Startup database initialization completed successfully.")
+    except Exception as e:
+        logger.error(f"Startup database initialization failed: {e}")
+
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
