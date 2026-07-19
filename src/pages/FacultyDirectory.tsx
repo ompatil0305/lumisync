@@ -4,7 +4,7 @@ import { useFaculty, useBuildings } from '../hooks/useUniversity';
 import {
   Search, X, User, Mail, Phone, MapPin, Building2,
   GraduationCap, ChevronRight, Filter, BookOpen,
-  Microscope, ExternalLink
+  Microscope, ExternalLink, Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { facultyDepartments } from '../data/facultyDirectory';
@@ -27,6 +27,43 @@ export default function FacultyDirectory() {
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [selectedFaculty, setSelectedFaculty] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Faculty issue reporting states
+  const [reportFacultyId, setReportFacultyId] = useState<string | null>(null);
+  const [facultyIssueText, setFacultyIssueText] = useState('');
+  const [facultyContactInfo, setFacultyContactInfo] = useState('');
+  const [facultySubmitting, setFacultySubmitting] = useState(false);
+  const [facultySubmitSuccess, setFacultySubmitSuccess] = useState(false);
+
+  const handleSubmitFacultyIssue = async (fId: string) => {
+    if (!facultyIssueText.trim()) return;
+    setFacultySubmitting(true);
+    try {
+      const response = await fetch('https://lumisync-backend-production.up.railway.app/api/v1/issues', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entity_type: 'faculty',
+          entity_id: fId,
+          issue_description: facultyIssueText,
+          reporter_contact: facultyContactInfo
+        })
+      });
+      if (response.ok) {
+        setFacultySubmitSuccess(true);
+        setFacultyIssueText('');
+        setFacultyContactInfo('');
+        setTimeout(() => {
+          setFacultySubmitSuccess(false);
+          setReportFacultyId(null);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error('Failed to submit faculty issue:', err);
+    } finally {
+      setFacultySubmitting(false);
+    }
+  };
 
   // Filter faculty
   const filteredFaculty = useMemo(() => {
@@ -275,6 +312,69 @@ export default function FacultyDirectory() {
                           <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">
                             {f.dataSource === 'official-directory' ? 'Official Public Directory' : f.dataSource}
                           </span>
+                        </div>
+
+                        {/* Report Issue Button/Form */}
+                        <div className="mt-3 border-t border-border/50 pt-2.5">
+                          {reportFacultyId === f.id ? (
+                            <div className="space-y-2 bg-muted/40 p-2.5 rounded-xl border border-border mt-1">
+                              {facultySubmitSuccess ? (
+                                <div className="text-[11px] font-bold text-emerald-500 flex items-center justify-center gap-1.5 py-1">
+                                  <Check size={13} /> Saved! Thank you for the correction.
+                                </div>
+                              ) : (
+                                <>
+                                  <span className="block text-[9px] font-bold uppercase text-muted-foreground">Report Info Discrepancy</span>
+                                  <textarea
+                                    placeholder="Explain what is incorrect (e.g. office moved to Room 302, incorrect email)."
+                                    value={facultyIssueText}
+                                    onChange={(e) => setFacultyIssueText(e.target.value)}
+                                    className="w-full bg-muted border border-border rounded-lg p-2 text-xs outline-none focus:border-primary resize-none h-14 text-foreground"
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                  <div className="flex gap-1.5">
+                                    <input
+                                      type="text"
+                                      placeholder="Contact (Optional)"
+                                      value={facultyContactInfo}
+                                      onChange={(e) => setFacultyContactInfo(e.target.value)}
+                                      className="flex-1 bg-muted border border-border rounded-lg px-2 py-1 text-[11px] outline-none focus:border-primary text-foreground"
+                                      onClick={(e) => e.stopPropagation()}
+                                    />
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSubmitFacultyIssue(f.id);
+                                      }}
+                                      disabled={facultySubmitting || !facultyIssueText.trim()}
+                                      className="bg-primary text-primary-foreground font-bold text-[10px] px-3 py-1 rounded-lg disabled:opacity-50"
+                                    >
+                                      Submit
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setReportFacultyId(null);
+                                      }}
+                                      className="bg-muted text-muted-foreground font-bold text-[10px] px-2 py-1 rounded-lg border"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportFacultyId(f.id);
+                              }}
+                              className="text-[10px] text-muted-foreground/60 hover:text-primary font-medium hover:underline block mx-auto mt-1"
+                            >
+                              Report incorrect information
+                            </button>
+                          )}
                         </div>
                       </div>
                     </motion.div>
