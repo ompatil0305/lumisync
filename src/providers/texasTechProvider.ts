@@ -18,6 +18,7 @@ import type {
   SearchResult,
   BuildingCategory,
   MapCategory,
+  FacultyMember,
 } from './types';
 
 import {
@@ -35,6 +36,7 @@ import {
 
 import { facultyMembers } from '../data/facultyDirectory';
 import { fetchWeather } from '../services/weatherService';
+import ttuCampusJson from '../data/ttu-campus.json';
 
 // ---- University Info ----
 const info: UniversityInfo = {
@@ -51,15 +53,115 @@ const info: UniversityInfo = {
   },
 };
 
-// ---- Data Transformation ----
-// Convert existing data to new provider format with dataSource labels
+// ---- Building ID Mappings ----
+const ID_MAPPING: Record<string, string> = {
+  'student-union': 'sub',
+  'rawls-college-of-business': 'rawls-college',
+  'holden-hall': 'holden-hall',
+  'texas-tech-university-library': 'university-library',
+  'administration-building': 'admin-building',
+  'english-philosophy-building': 'english-phil',
+  'talkington-hall': 'talkington-hall',
+  'jones-att-stadium': 'jones-stadium',
+  'student-recreation-center': 'student-rec',
+  'student-wellness-center': 'student-health',
+  'moody-planetarium': 'moody-planetarium'
+};
 
-function transformBuilding(b: typeof rawBuildings[0]): CampusBuilding {
+// ---- Data Transformation ----
+
+const idsSeen = new Set<string>();
+
+// Merge OSM building footprints and coordinates with local detailed profiles
+const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
+  let targetId = osmB.id;
+  if (ID_MAPPING[osmB.id]) {
+    targetId = ID_MAPPING[osmB.id];
+  }
+
+  // Deduplicate duplicate OSM IDs using a suffix counter
+  let baseId = targetId;
+  let uniqueId = baseId;
+  let counter = 1;
+  while (idsSeen.has(uniqueId)) {
+    uniqueId = `${baseId}-${counter}`;
+    counter++;
+  }
+  idsSeen.add(uniqueId);
+
+  const rawMatch = rawBuildings.find((r) => r.id === targetId || r.name.toLowerCase() === osmB.name.toLowerCase());
+  
+  // Normalize category mapping
+  let category: CampusBuilding['category'] = osmB.category as any;
+  if (rawMatch?.category) {
+    if (rawMatch.category === 'administrative') category = 'admin';
+    else if (rawMatch.category === 'landmark' || rawMatch.category === 'health' || rawMatch.category === 'museum') category = 'other' as any;
+    else category = rawMatch.category as any;
+  }
+
+  if (category === 'administrative' as any) category = 'admin';
+  if (!['academic', 'dining', 'parking', 'residence', 'recreation', 'library', 'admin', 'other'].includes(category)) {
+    category = 'other' as any;
+  }
+
+  const name = rawMatch?.name || osmB.name;
+  const description = rawMatch?.description || `${name} on the Texas Tech University campus.`;
+
   return {
-    ...b,
-    dataSource: 'official-directory',
+    id: uniqueId,
+    slug: uniqueId,
+    officialNumber: osmB.officialNumber || 'N/A',
+    name,
+    aliases: Array.from(new Set([...(osmB.aliases || []), ...(rawMatch?.aliases || [])])),
+    category,
+    coordinates: osmB.coordinates,
+    latitude: osmB.coordinates.lat,
+    longitude: osmB.coordinates.lng,
+    footprint: osmB.footprint,
+    entrances: osmB.entrances || [],
+    hours: osmB.hours || {},
+    accessibility: {
+      wheelchairEntrance: osmB.accessibility?.wheelchairEntrance ?? rawMatch?.wheelchairAccessible ?? true,
+      elevatorAvailable: osmB.accessibility?.elevatorAvailable ?? true,
+      restroomsAccessible: true,
+      elevatorsCount: rawMatch?.floors && rawMatch.floors > 1 ? 1 : 0,
+      bikeRacksAvailable: true,
+      emergencyPhonesNearby: true,
+      aedLocations: rawMatch?.aedLocations || ['Main Lobby']
+    },
+    photos: rawMatch?.photo ? [rawMatch.photo] : [],
+    
+    // Optional detailed parameters
+    abbreviation: rawMatch?.abbreviation || osmB.abbreviation,
+    departments: rawMatch?.departments,
+    address: rawMatch?.address || osmB.address,
+    description,
+    floors: rawMatch?.floors || osmB.floors,
+    hasDining: rawMatch?.hasDining || osmB.hasDining,
+    hasParkingNearby: rawMatch?.hasParkingNearby,
+    nearestShuttleStop: rawMatch?.nearestShuttleStop,
+    website: rawMatch?.website || '',
+    phone: rawMatch?.phone || '',
+    email: rawMatch?.email || '',
+    restrooms: rawMatch?.restrooms || 'Accessible public restrooms available.',
+    accessibleEntrances: osmB.entrances || [],
+    elevators: rawMatch?.elevators || (osmB.accessibility?.elevatorAvailable ? 'Passenger elevators available' : 'Not available'),
+    bikeRacks: rawMatch?.bikeRacks || 'Bike racks located outside main entrance.',
+    emergencyPhones: rawMatch?.emergencyPhones || 'Emergency blue-light phones available near building.',
+    aedLocations: rawMatch?.aedLocations || ['Available inside main entrance lobby.'],
+    favoriteSupport: true,
+    searchKeywords: Array.from(new Set([
+      name.toLowerCase(),
+      uniqueId.toLowerCase(),
+      ...(osmB.aliases || []).map((a: string) => a.toLowerCase()),
+      ...(rawMatch?.aliases || []).map((a: string) => a.toLowerCase()),
+      ...(rawMatch?.departments || []).map((d: string) => d.toLowerCase()),
+      ...(osmB.abbreviation ? [osmB.abbreviation.toLowerCase()] : []),
+      ...(rawMatch?.abbreviation ? [rawMatch.abbreviation.toLowerCase()] : [])
+    ])),
+    dataSource: 'official-directory'
   };
-}
+});
 
 function transformDining(d: typeof rawDining[0]): DiningVenue {
   return {
@@ -114,7 +216,6 @@ function transformAlert(a: typeof rawAlerts[0]): CampusAlert {
 }
 
 // ---- Cached Data ----
-const buildings = rawBuildings.map(transformBuilding);
 const diningVenues = rawDining.map(transformDining);
 const parkingLots = rawParking.map(transformParking);
 const shuttleRoutes = rawShuttle.map(transformShuttle);
@@ -124,29 +225,126 @@ const studentOrgs = rawOrgs.map(transformOrg);
 const campusAlerts = rawAlerts.map(transformAlert);
 const mapCategories = [...rawMapCategories] as MapCategory[];
 
+// ---- API Client Configurations ----
+const API_BASE = 'https://lumisync-backend-production.up.railway.app/api/v1';
+
+function mapApiBuildingToFrontend(apiB: any): CampusBuilding {
+  return {
+    id: apiB.slug,
+    slug: apiB.slug,
+    name: apiB.name,
+    officialNumber: apiB.official_number || 'N/A',
+    category: apiB.category,
+    abbreviation: apiB.slug.toUpperCase(),
+    aliases: apiB.aliases || [],
+    coordinates: { lat: apiB.latitude, lng: apiB.longitude },
+    latitude: apiB.latitude,
+    longitude: apiB.longitude,
+    footprint: apiB.footprint,
+    entrances: apiB.entrances || [],
+    hours: apiB.hours || {},
+    accessibility: {
+      wheelchairEntrance: apiB.wheelchair_entrance,
+      elevatorAvailable: apiB.elevator_available,
+      restroomsAccessible: true,
+      elevatorsCount: apiB.elevator_available ? 1 : 0,
+      bikeRacksAvailable: true,
+      emergencyPhonesNearby: true,
+      aedLocations: ['Main Lobby']
+    },
+    photos: apiB.photos || [],
+    needsReview: apiB.needs_verification,
+    dataSource: 'official-directory',
+    favoriteSupport: true,
+    searchKeywords: [
+      apiB.name.toLowerCase(),
+      apiB.slug.toLowerCase(),
+      ...(apiB.aliases || []).map((a: string) => a.toLowerCase())
+    ]
+  };
+}
+
+function mapApiFacultyToFrontend(apiF: any, buildingsList: CampusBuilding[]): FacultyMember {
+  const names = apiF.full_name.split(' ');
+  const firstName = names[0] || '';
+  const lastName = names[names.length - 1] || '';
+  
+  // Find building slug from buildingsList using office_building_id
+  const matchingBuilding = buildingsList.find(b => b.id === apiF.office_building_id || b.slug === apiF.office_building_id);
+  const officeBuildingId = matchingBuilding ? matchingBuilding.slug : 'holden-hall';
+  
+  return {
+    id: apiF.id,
+    firstName,
+    lastName,
+    fullName: apiF.full_name,
+    department: apiF.department,
+    position: apiF.title || 'Faculty Member',
+    officeBuildingId,
+    officeRoom: apiF.office_room || 'N/A',
+    officePhone: apiF.phone || 'N/A',
+    email: apiF.email || 'N/A',
+    biography: `${apiF.full_name} is a faculty member in the Department of ${apiF.department} at Texas Tech University.`,
+    researchInterests: [apiF.department, 'Academic Research'],
+    coursesTaught: [],
+    website: apiF.profile_url || '',
+    coordinates: matchingBuilding ? [matchingBuilding.latitude, matchingBuilding.longitude] : [33.5842, -101.8801],
+    dataSource: 'official-directory',
+    needsReview: apiF.needs_verification
+  };
+}
+
 // ---- Provider Implementation ----
 export const texasTechProvider: UniversityProvider = {
   info,
 
   // Buildings
   async getBuildings() {
-    return buildings;
+    try {
+      const res = await fetch(`${API_BASE}/buildings`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map(mapApiBuildingToFrontend);
+    } catch (err) {
+      console.warn('Failed to fetch buildings from API, falling back to static data:', err);
+      return buildings;
+    }
   },
 
   async getBuildingById(id: string) {
-    return buildings.find((b) => b.id === id);
+    try {
+      const res = await fetch(`${API_BASE}/buildings/${id}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return mapApiBuildingToFrontend(data);
+    } catch (err) {
+      console.warn(`Failed to fetch building ${id} from API, falling back to static data:`, err);
+      return buildings.find((b) => b.id === id || b.slug === id);
+    }
   },
 
   async getBuildingsByCategory(category: BuildingCategory) {
-    return buildings.filter((b) => b.category === category);
+    try {
+      const res = await fetch(`${API_BASE}/buildings?category=${category}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map(mapApiBuildingToFrontend);
+    } catch (err) {
+      console.warn(`Failed to fetch buildings by category ${category} from API, falling back to static data:`, err);
+      return buildings.filter((b) => b.category === category);
+    }
   },
 
   async searchBuildings(query: string) {
-    const q = query.toLowerCase();
-    return buildings.filter(
+    const q = query.toLowerCase().trim();
+    if (!q) return [];
+    const list = await this.getBuildings();
+    return list.filter(
       (b) =>
         b.name.toLowerCase().includes(q) ||
-        b.abbreviation.toLowerCase().includes(q) ||
+        b.officialNumber.toLowerCase().includes(q) ||
+        b.aliases.some((a) => a.toLowerCase().includes(q)) ||
+        b.abbreviation?.toLowerCase().includes(q) ||
         b.departments?.some((d) => d.toLowerCase().includes(q)) ||
         b.description?.toLowerCase().includes(q) ||
         b.address?.toLowerCase().includes(q)
@@ -155,27 +353,64 @@ export const texasTechProvider: UniversityProvider = {
 
   // Faculty
   async getFaculty() {
-    return facultyMembers;
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+    } catch (err) {
+      console.warn('Failed to fetch faculty from API, falling back to static data:', err);
+      return facultyMembers;
+    }
   },
 
   async getFacultyById(id: string) {
-    return facultyMembers.find((f) => f.id === id);
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty/${id}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return mapApiFacultyToFrontend(data, bList);
+    } catch (err) {
+      console.warn(`Failed to fetch faculty ${id} from API, falling back to static data:`, err);
+      return facultyMembers.find((f) => f.id === id);
+    }
   },
 
   async getFacultyByDepartment(department: string) {
-    return facultyMembers.filter((f) => f.department === department);
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty?department=${encodeURIComponent(department)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+    } catch (err) {
+      console.warn(`Failed to fetch faculty by department ${department} from API, falling back to static data:`, err);
+      return facultyMembers.filter((f) => f.department === department);
+    }
   },
 
   async searchFaculty(query: string) {
-    const q = query.toLowerCase();
-    return facultyMembers.filter(
-      (f) =>
-        f.fullName.toLowerCase().includes(q) ||
-        f.department.toLowerCase().includes(q) ||
-        f.position.toLowerCase().includes(q) ||
-        f.researchInterests?.some((r) => r.toLowerCase().includes(q)) ||
-        f.email?.toLowerCase().includes(q)
-    );
+    const q = query.toLowerCase().trim();
+    if (!q) return [];
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty?search=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+    } catch (err) {
+      console.warn(`Failed to search faculty ${query} from API, falling back to static data:`, err);
+      return facultyMembers.filter(
+        (f) =>
+          f.fullName.toLowerCase().includes(q) ||
+          f.department.toLowerCase().includes(q) ||
+          f.position.toLowerCase().includes(q) ||
+          f.researchInterests?.some((r) => r.toLowerCase().includes(q)) ||
+          f.email?.toLowerCase().includes(q)
+      );
+    }
   },
 
   // Dining
@@ -268,13 +503,18 @@ export const texasTechProvider: UniversityProvider = {
     if (q.length < 2) return [];
 
     const results: SearchResult[] = [];
+    const bList = await this.getBuildings();
+    const fList = await this.getFaculty();
 
     // Search buildings
-    buildings
+    bList
       .filter(
         (b) =>
           b.name.toLowerCase().includes(q) ||
-          b.abbreviation.toLowerCase().includes(q) ||
+          (b.officialNumber && b.officialNumber !== 'N/A' && b.officialNumber.toLowerCase().includes(q)) ||
+          b.officialNumber.toLowerCase().includes(q) ||
+          b.aliases.some((a) => a.toLowerCase().includes(q)) ||
+          b.abbreviation?.toLowerCase().includes(q) ||
           b.departments?.some((d) => d.toLowerCase().includes(q))
       )
       .forEach((b) =>
@@ -282,16 +522,16 @@ export const texasTechProvider: UniversityProvider = {
           id: b.id,
           type: 'building',
           title: b.name,
-          subtitle: b.abbreviation + (b.departments ? ` - ${b.departments[0]}` : ''),
+          subtitle: (b.abbreviation || b.officialNumber) + (b.departments && b.departments.length > 0 ? ` - ${b.departments[0]}` : ''),
           icon: 'Building2',
-          coordinates: b.coordinates,
+          coordinates: [b.latitude, b.longitude],
           category: b.category,
-          dataSource: b.dataSource,
+          dataSource: b.dataSource || 'official-directory',
         })
       );
 
     // Search faculty
-    facultyMembers
+    fList
       .filter(
         (f) =>
           f.fullName.toLowerCase().includes(q) ||
@@ -419,3 +659,4 @@ export const texasTechProvider: UniversityProvider = {
     return mapCategories;
   },
 };
+

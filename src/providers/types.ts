@@ -44,23 +44,43 @@ export interface UniversityInfo {
 // ---- Building Types ----
 export type BuildingCategory =
   | 'academic'
-  | 'administrative'
-  | 'residence'
   | 'dining'
-  | 'library'
-  | 'recreation'
   | 'parking'
-  | 'landmark'
-  | 'health'
-  | 'museum';
+  | 'residence'
+  | 'recreation'
+  | 'library'
+  | 'admin'
+  | 'other';
 
 export interface CampusBuilding {
   id: string;
+  slug: string;
+  officialNumber: string;
   name: string;
-  abbreviation: string;
-  aliases?: string[];
-  coordinates: [number, number];
+  aliases: string[];
   category: BuildingCategory;
+  coordinates: { lat: number; lng: number };
+  latitude: number;
+  longitude: number;
+  footprint?: {
+    type: 'Polygon';
+    coordinates: number[][][];
+  };
+  entrances: { lat: number; lng: number; label?: string }[];
+  hours?: { [key: string]: { open: string; close: string } };
+  accessibility: {
+    wheelchairEntrance: boolean;
+    elevatorAvailable: boolean;
+    restroomsAccessible?: boolean;
+    elevatorsCount?: number;
+    bikeRacksAvailable?: boolean;
+    emergencyPhonesNearby?: boolean;
+    aedLocations?: string[];
+  };
+  photos?: string[];
+  
+  // Optional metadata from directory details
+  abbreviation?: string;
   departments?: string[];
   address?: string;
   description?: string;
@@ -69,14 +89,19 @@ export interface CampusBuilding {
   hasDining?: boolean;
   hasParkingNearby?: string[];
   nearestShuttleStop?: string;
-  photo?: string;
   website?: string;
-  hours?: { [key: string]: { open: string; close: string } };
-  accessibility?: string[];
-  wheelchairAccessible?: boolean;
+  phone?: string;
+  email?: string;
+  restrooms?: string;
+  accessibleEntrances?: { lat: number; lng: number; label?: string }[];
+  elevators?: string;
+  bikeRacks?: string;
+  emergencyPhones?: string;
+  aedLocations?: string[];
+  favoriteSupport?: boolean;
   needsReview?: boolean;
-  markerIcon?: string;
-  dataSource: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
+  searchKeywords?: string[];
+  dataSource?: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
 }
 
 // ---- Navigation Types (Future Support) ----
@@ -109,6 +134,7 @@ export interface FacultyMember {
   photo?: string;
   website?: string;
   coordinates?: [number, number]; // Office location on map
+  needsReview?: boolean;
   dataSource: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
 }
 

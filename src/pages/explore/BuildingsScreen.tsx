@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { buildings } from '../../data/universityProfile';
+import { useBuildings } from '../../hooks/useUniversity';
 import { Search, Building2, ChevronLeft, MapPin, Navigation } from 'lucide-react';
 
 export default function BuildingsScreen() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const { data: buildings = [] } = useBuildings();
 
   const filtered = buildings.filter(b =>
     b.name.toLowerCase().includes(query.toLowerCase()) ||
     b.abbreviation?.toLowerCase().includes(query.toLowerCase()) ||
-    b.departments?.some(d => d.toLowerCase().includes(query.toLowerCase()))
+    b.departments?.some(d => d.toLowerCase().includes(query.toLowerCase())) ||
+    (b.officialNumber && b.officialNumber !== 'N/A' && b.officialNumber.toLowerCase().includes(query.toLowerCase()))
   );
 
-  const categories = ['academic', 'administrative', 'residence', 'library', 'recreation', 'health', 'museum', 'landmark', 'parking'] as const;
+  const categories = ['academic', 'dining', 'parking', 'residence', 'recreation', 'library', 'admin', 'other'] as const;
 
   return (
     <div className="min-h-full bg-background">

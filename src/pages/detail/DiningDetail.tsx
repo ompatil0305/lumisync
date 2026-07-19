@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { diningVenues, isVenueOpen } from '../../data/universityProfile';
+import { useDiningVenue } from '../../hooks/useUniversity';
 import { ChevronLeft, UtensilsCrossed, Clock, MapPin, Heart, Info } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -7,7 +7,16 @@ export default function DiningDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
-  const venue = diningVenues.find(v => v.id === id);
+  
+  const { data: venue, isLoading } = useDiningVenue(id || '');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!venue) {
     return (
@@ -17,7 +26,8 @@ export default function DiningDetail() {
     );
   }
 
-  const open = isVenueOpen(venue);
+  // Fallback for open determination
+  const open = venue.hours ? (venue.hours as any).Mon?.open !== 'Closed' : true;
   const isFav = state.favoriteDining.includes(venue.id);
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -58,9 +68,6 @@ export default function DiningDetail() {
           <p className="text-sm text-muted-foreground flex items-center gap-1">
             <MapPin size={14} /> {venue.location}
           </p>
-          {venue.distance && (
-            <p className="text-xs text-muted-foreground mt-0.5">{venue.distance} from center campus</p>
-          )}
         </div>
 
         {/* Description */}

@@ -1,18 +1,7 @@
 // Texas Tech University Profile - All data modeled on real TTU sources
 // Source references included for transparency
 
-export interface UniversityProfile {
-  id: string;
-  name: string;
-  shortName: string;
-  mascot: string;
-  colors: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    primaryLight: string;
-    primaryDark: string;
-  };
+;
   location: {
     city: string;
     state: string;
@@ -33,7 +22,7 @@ export interface UniversityProfile {
   };
 }
 
-export const ttuProfile: UniversityProfile = {
+exports.ttuProfile: UniversityProfile = {
   id: 'ttu',
   name: 'Texas Tech University',
   shortName: 'Texas Tech',
@@ -67,35 +56,9 @@ export const ttuProfile: UniversityProfile = {
 
 // ---- BUILDINGS ----
 // Modeled on real TTU campus map: map.ttu.edu
-export interface Building {
-  id: string;
-  name: string;
-  abbreviation: string;
-  aliases?: string[];
-  coordinates: [number, number];
-  category: 'academic' | 'administrative' | 'residence' | 'dining' | 'library' | 'recreation' | 'parking' | 'landmark' | 'health' | 'museum';
-  departments?: string[];
-  address?: string;
-  description?: string;
-  floors?: number;
-  hasDining?: boolean;
-  hasParkingNearby?: string[];
-  nearestShuttleStop?: string;
-  photo?: string;
-  wheelchairAccessible?: boolean;
-  needsReview?: boolean;
-  dataSource?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  restrooms?: string;
-  elevators?: string;
-  bikeRacks?: string;
-  emergencyPhones?: string;
-  aedLocations?: string[];
-}
 
-export const buildings: Building[] = [
+
+exports.buildings: Building[] = [
   {
     id: 'holden-hall',
     name: 'Holden Hall',
@@ -418,15 +381,7 @@ export const buildings: Building[] = [
 
 // ---- DINING VENUES ----
 // Modeled on TTU Hospitality Services: www.depts.ttu.edu/hospitality/
-export interface DiningVenue {
-  id: string;
-  name: string;
-  location: string;
-  buildingId?: string;
-  coordinates: [number, number];
-  category: 'all-you-care' | 'food-court' | 'grab-go' | 'coffee' | 'fast-food' | 'retail';
-  description: string;
-  hours: { [key: string]: { open: string; close: string } };
+ };
   acceptsDiningBucks: boolean;
   hasCommuterDiscount: boolean;
   stations?: string[];
@@ -436,7 +391,7 @@ export interface DiningVenue {
   distance?: string;
 }
 
-export const diningVenues: DiningVenue[] = [
+exports.diningVenues: DiningVenue[] = [
   {
     id: 'the-commons',
     name: 'The Commons',
@@ -623,23 +578,12 @@ export const diningVenues: DiningVenue[] = [
 
 // ---- PARKING LOTS ----
 // Modeled on TTU Transportation & Parking Services: www.depts.ttu.edu/parking/
-export interface ParkingLot {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  category: 'resident' | 'commuter' | 'garage' | 'visitor' | 'faculty';
-  permitRequired: string[];
-  totalSpaces: number;
-  occupiedSpaces: number;
-  status: 'available' | 'limited' | 'full';
-  hours: string;
-  eveningWeekendNote: string;
-  walkingDistances: { buildingId: string; minutes: number }[];
+[];
   features?: string[];
   rate?: string;
 }
 
-export const parkingLots: ParkingLot[] = [
+exports.parkingLots: ParkingLot[] = [
   {
     id: 'flint-ave-garage',
     name: 'Flint Avenue Parking Facility',
@@ -747,24 +691,13 @@ export const parkingLots: ParkingLot[] = [
 
 // ---- SHUTTLE ROUTES ----
 // Modeled on Citibus/DoubleMap system
-export interface ShuttleRoute {
-  id: string;
-  name: string;
-  color: string;
-  description: string;
-  stops: ShuttleStop[];
-  schedule: { [key: string]: { start: string; end: string; frequency: string } };
+ };
   isActive: boolean;
 }
 
-export interface ShuttleStop {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  nextArrival?: number; // minutes
-}
 
-export const shuttleRoutes: ShuttleRoute[] = [
+
+exports.shuttleRoutes: ShuttleRoute[] = [
   {
     id: 'red-raider',
     name: 'Red Raider',
@@ -840,25 +773,9 @@ export const shuttleRoutes: ShuttleRoute[] = [
 
 // ---- EVENTS ----
 // Modeled on TechEvents Calendar: ttu.campuslabs.com/engage/eventcalendar
-export interface CampusEvent {
-  id: string;
-  title: string;
-  organization: string;
-  category: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  buildingId?: string;
-  coordinates?: [number, number];
-  description: string;
-  hasFreeFood: boolean;
-  isRecurring?: boolean;
-  rsvpLink?: string;
-  photo?: string;
-  date: string;
-}
 
-export const campusEvents: CampusEvent[] = [
+
+exports.campusEvents: CampusEvent[] = [
   {
     id: 'evt-1',
     title: 'Engineering Career Fair',
@@ -973,25 +890,9 @@ export const campusEvents: CampusEvent[] = [
 
 // ---- JOBS ----
 // Modeled on Red Raider Student Employment Center & Hire Red Raiders
-export interface CampusJob {
-  id: string;
-  title: string;
-  department: string;
-  location: string;
-  type: 'On-Campus' | 'Federal Work-Study' | 'Off-Campus';
-  payRange: string;
-  payType: 'hourly' | 'salary';
-  description: string;
-  requirements: string[];
-  applicationDeadline: string;
-  hoursPerWeek: string;
-  source: 'RRSEC' | 'Hire Red Raiders';
-  sourceUrl: string;
-  isNew: boolean;
-  postedDate: string;
-}
 
-export const campusJobs: CampusJob[] = [
+
+exports.campusJobs: CampusJob[] = [
   {
     id: 'job-1',
     title: 'Library Front Desk Assistant',
@@ -1098,21 +999,9 @@ export const campusJobs: CampusJob[] = [
 
 // ---- STUDENT ORGANIZATIONS ----
 // Modeled on TechConnect org directory: ttu.campuslabs.com/engage/organizations
-export interface StudentOrg {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  meetingTime?: string;
-  meetingLocation?: string;
-  memberCount?: number;
-  email?: string;
-  socialLink?: string;
-  isFavorite?: boolean;
-  photo?: string;
-}
 
-export const studentOrgs: StudentOrg[] = [
+
+exports.studentOrgs: StudentOrg[] = [
   {
     id: 'org-1',
     name: 'Association for Computing Machinery (ACM)',
@@ -1196,19 +1085,9 @@ export const studentOrgs: StudentOrg[] = [
 ];
 
 // ---- CLASS SCHEDULE (Demo) ----
-export interface ClassSession {
-  id: string;
-  courseCode: string;
-  courseName: string;
-  buildingId: string;
-  room: string;
-  startTime: string;
-  endTime: string;
-  days: string[];
-  professor: string;
-}
 
-export const demoSchedule: ClassSession[] = [
+
+exports.demoSchedule: ClassSession[] = [
   {
     id: 'cls-1',
     courseCode: 'CS 3361',
@@ -1245,17 +1124,9 @@ export const demoSchedule: ClassSession[] = [
 ];
 
 // ---- CAMPUS ALERTS ----
-export interface CampusAlert {
-  id: string;
-  type: 'weather' | 'safety' | 'emergency';
-  title: string;
-  message: string;
-  severity: 'info' | 'warning' | 'critical';
-  timestamp: string;
-  isDismissible: boolean;
-}
 
-export const campusAlerts: CampusAlert[] = [
+
+exports.campusAlerts: CampusAlert[] = [
   {
     id: 'alert-1',
     type: 'weather',
@@ -1268,7 +1139,7 @@ export const campusAlerts: CampusAlert[] = [
 ];
 
 // ---- MAP CATEGORIES ----
-export const mapCategories = [
+exports.mapCategories = [
   { id: 'academic', label: 'Academic', icon: 'GraduationCap', color: '#CC0000' },
   { id: 'administrative', label: 'Administrative', icon: 'Building2', color: '#666666' },
   { id: 'residence', label: 'Residence & Dining', icon: 'Home', color: '#0066CC' },
@@ -1277,7 +1148,7 @@ export const mapCategories = [
   { id: 'parking', label: 'Parking & Transportation', icon: 'Car', color: '#339933' },
   { id: 'health', label: 'Health & Safety', icon: 'Heart', color: '#CC0000' },
   { id: 'landmark', label: 'Landmarks', icon: 'Landmark', color: '#FDB927' },
-] as const;
+];
 
 // Helper to get today's classes
 export function getTodayClasses(): ClassSession[] {

@@ -7,14 +7,14 @@ import {
 import { motion } from 'framer-motion';
 
 const categories = [
-  { label: 'Dining', description: '17 venues · 50+ concepts', icon: UtensilsCrossed, path: '/explore/dining', color: 'text-red-500 bg-red-500/10' },
-  { label: 'Parking', description: 'Live lot availability', icon: Car, path: '/explore/parking', color: 'text-emerald-500 bg-emerald-500/10' },
-  { label: 'Buildings', description: 'Find any room or hall', icon: Building2, path: '/explore/buildings', color: 'text-blue-500 bg-blue-500/10' },
-  { label: 'Jobs', description: 'On-campus & work-study', icon: Briefcase, path: '/explore/jobs', color: 'text-purple-500 bg-purple-500/10' },
-  { label: 'Events', description: 'TechEvents calendar', icon: CalendarDays, path: '/explore/events', color: 'text-orange-500 bg-orange-500/10' },
-  { label: 'Organizations', description: '500+ student orgs', icon: Users, path: '/explore/orgs', color: 'text-pink-500 bg-pink-500/10' },
-  { label: 'Shuttle', description: 'Live bus tracking', icon: Bus, path: '/explore/shuttle', color: 'text-amber-500 bg-amber-500/10' },
-  { label: 'Search', description: 'Search everything', icon: Search, path: '/search', color: 'text-gray-500 bg-gray-500/10' },
+  { label: 'Dining', description: '17 venues · 50+ concepts', icon: UtensilsCrossed, path: '/explore/dining', color: 'text-primary bg-primary/10' },
+  { label: 'Parking', description: 'Live lot availability', icon: Car, path: '/explore/parking', color: 'text-primary bg-primary/10' },
+  { label: 'Buildings', description: 'Find any room or hall', icon: Building2, path: '/explore/buildings', color: 'text-primary bg-primary/10' },
+  { label: 'Jobs', description: 'On-campus & work-study', icon: Briefcase, path: '/explore/jobs', color: 'text-primary bg-primary/10' },
+  { label: 'Events', description: 'TechEvents calendar', icon: CalendarDays, path: '/explore/events', color: 'text-primary bg-primary/10' },
+  { label: 'Organizations', description: '500+ student orgs', icon: Users, path: '/explore/orgs', color: 'text-primary bg-primary/10' },
+  { label: 'Shuttle', description: 'Live bus tracking', icon: Bus, path: '/explore/shuttle', color: 'text-primary bg-primary/10' },
+  { label: 'Search', description: 'Search everything', icon: Search, path: '/search', color: 'text-primary bg-primary/10' },
 ];
 
 export default function Explore() {

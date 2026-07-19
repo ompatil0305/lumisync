@@ -163,9 +163,9 @@ Discover on-campus opportunities.
 
 ---
 
-## 🤖 AI Assistant (Coming Soon)
+## 🤖 AI Assistant (Lumi AI)
 
-Future AI assistant capable of answering campus-related questions using trusted university data.
+Intelligent conversational assistant powered by Google Gemini (using FastAPI + pgvector + RAG) to answer campus-related questions.
 
 Examples:
 
@@ -242,15 +242,14 @@ Future:
 
 - Mapbox
 
-## Backend (Planned)
+## Backend
 
 - FastAPI
-- PostgreSQL
-- Redis
+- PostgreSQL & pgvector (Vector storage for RAG)
 
-## AI (Planned)
+## AI
 
-- OpenAI API
+- Google Gemini API (via google-genai SDK)
 - Retrieval-Augmented Generation (RAG)
 
 ## Authentication (Planned)
@@ -265,32 +264,31 @@ Future:
 
 ## Version 1
 
-- ✅ Interactive Campus Map
-- ✅ Search
+- ✅ Interactive Campus Map (TTU OSM footprints & outdoor pedestrian routing - actively being refined)
+- ✅ Search (Fuzzy alias/number searching)
 - ✅ Home Dashboard
 - ✅ Weather
 - ✅ Parking
 - ✅ Dining
+- ✅ AI Assistant (Lumi AI - Powered by Google Gemini & RAG)
 
 ---
 
 ## Version 2
 
+- ✅ Student Organizations
+- ✅ Campus Events
+- ✅ Campus Jobs
+- ✅ Favorite Locations
 - Faculty Directory
-- Student Organizations
-- Campus Events
-- Campus Jobs
 - Building Images
-- Favorite Locations
 
 ---
 
 ## Version 3
 
 - Canvas Integration
-- AI Assistant
 - Notifications
-- Favorites
 - Student Profile
 
 ---
@@ -429,6 +427,11 @@ This project uses publicly available information where appropriate and relies on
 - OpenStreetMap
 
 Future integrations may use official university APIs and other public data sources where available.
+
+---
+
+## 🏗 Architecture Notes
+- **App Shell SPA:** The main client application (`lumisync`) is built as a pure client-rendered Vite Single Page Application (SPA). This is intentional since the dashboard sits behind the landing page and is private/authenticated, while the public marketing pages are server-side rendered (SSR) in the Next.js `lumisync_website` repository to handle SEO, sitemaps, and public metadata.
 
 ---
 

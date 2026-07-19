@@ -1,12 +1,31 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { shuttleRoutes } from '../../data/universityProfile';
+import { useShuttleRoutes } from '../../hooks/useUniversity';
 import { Bus, ChevronLeft, Phone } from 'lucide-react';
 
 export default function ShuttleScreen() {
   const navigate = useNavigate();
-  const [activeRoute, setActiveRoute] = useState(shuttleRoutes[0].id);
-  const route = shuttleRoutes.find(r => r.id === activeRoute)!;
+  const { data: shuttleRoutes = [], isLoading } = useShuttleRoutes();
+  const [activeRoute, setActiveRoute] = useState<string | null>(null);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const currentRouteId = activeRoute || shuttleRoutes[0]?.id;
+  const route = shuttleRoutes.find(r => r.id === currentRouteId) || shuttleRoutes[0];
+
+  if (!route) {
+    return (
+      <div className="min-h-full flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">No shuttle routes available.</p>
+      </div>
+    );
+  }
 
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const today = days[new Date().getDay() - 1] || 'Sun';
@@ -27,9 +46,9 @@ export default function ShuttleScreen() {
                 key={r.id}
                 onClick={() => setActiveRoute(r.id)}
                 className={`flex-1 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                  activeRoute === r.id ? 'text-white' : 'bg-muted text-muted-foreground'
+                  currentRouteId === r.id ? 'text-white' : 'bg-muted text-muted-foreground'
                 }`}
-                style={activeRoute === r.id ? { backgroundColor: r.color } : {}}
+                style={currentRouteId === r.id ? { backgroundColor: r.color } : {}}
               >
                 <div className="flex items-center gap-1.5 justify-center">
                   <Bus size={14} />

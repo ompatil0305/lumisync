@@ -11,55 +11,49 @@
 
 @layer base {
   :root {
-    /* --- Lumisync Brand (Texas Tech Red / Black) --- */
-    --lumi-blue:         204 0 0;     /* Texas Tech Red #CC0000 */
-    --lumi-blue-hover:   153 0 0;     /* Red-800 */
-    --lumi-gold:         180 143 42;
-    --lumi-green:        21 128 61;
-
-    /* --- University Dynamic Accent (overridden per university) --- */
-    --uni-primary: 204 0 0;
-    --uni-primary-foreground: 255 255 255;
+    /* --- Texas Tech Brand HSL Tokens --- */
+    --uni-primary: 0 100% 40%;              /* Texas Tech Red #CC0000 */
+    --uni-primary-foreground: 0 0% 100%;    /* White #FFFFFF */
 
     /* --- shadcn/ui tokens (Light) --- */
-    --background: 250 250 249;         /* Warm White */
-    --foreground: 28 25 23;            /* Stone-900 */
-    --card: 255 255 255;               /* White */
-    --card-foreground: 28 25 23;
-    --popover: 255 255 255;
-    --popover-foreground: 28 25 23;
-    --primary: 204 0 0;               /* Texas Tech Red */
-    --primary-foreground: 255 255 255;
-    --secondary: 245 245 244;          /* Stone-100 */
-    --secondary-foreground: 28 25 23;
-    --muted: 245 245 244;
-    --muted-foreground: 120 113 108;   /* Stone-500 */
-    --accent: 231 229 228;             /* Stone-200 */
-    --accent-foreground: 28 25 23;
-    --destructive: 185 28 28;          /* Soft Red */
-    --destructive-foreground: 255 255 255;
-    --border: 231 229 228;             /* Stone-200 */
-    --input: 231 229 228;
-    --ring: 204 0 0;                 /* Texas Tech Red ring */
+    --background: 0 0% 100%;                /* White #FFFFFF */
+    --foreground: 0 0% 0%;                  /* Black #000000 */
+    --card: 0 0% 100%;                      /* White */
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 100% 40%;                  /* Texas Tech Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96.1%;                /* Light Gray #F5F5F5 */
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 20%;           /* Mid Gray #333333 */
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84.2% 60.2%;          /* Genuine alert red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 80%;                    /* Border Gray #CCCCCC */
+    --input: 0 0% 80%;
+    --ring: 0 100% 40%;
     --radius: 0.75rem;
 
     /* --- Sidebar tokens --- */
-    --sidebar-background: 250 250 249;
-    --sidebar-foreground: 28 25 23;
-    --sidebar-primary: 28 25 23;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 245 245 244;
-    --sidebar-accent-foreground: 28 25 23;
-    --sidebar-border: 231 229 228;
-    --sidebar-ring: 204 0 0;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 0 100% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96.1%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 80%;
+    --sidebar-ring: 0 100% 40%;
 
     /* --- Status Colors --- */
-    --success: 21 128 61;
-    --success-fg: 255 255 255;
-    --warning: 180 83 9;
-    --warning-fg: 255 255 255;
-    --info: 204 0 0;
-    --info-fg: 255 255 255;
+    --success: 142.1 76.2% 36.3%;          /* Green */
+    --success-fg: 0 0% 100%;
+    --warning: 38 92% 50%;                 /* Amber */
+    --warning-fg: 0 0% 100%;
+    --info: 0 100% 40%;
+    --info-fg: 0 0% 100%;
 
     /* --- Typography Scale --- */
     --font-display: 'Outfit', -apple-system, sans-serif;
@@ -72,35 +66,35 @@
   }
 
   .dark {
-    --uni-primary: 255 69 58;          /* Vibrant Red for dark theme */
-    --background: 20 20 19;            /* Warm near-black */
-    --foreground: 250 250 249;         /* Warm off-white */
-    --card: 28 27 26;                  /* Stone-900 surface */
-    --card-foreground: 250 250 249;
-    --popover: 28 27 26;
-    --popover-foreground: 250 250 249;
-    --primary: 255 69 58;              /* Vibrant Red in dark */
-    --primary-foreground: 255 255 255;
-    --secondary: 36 35 34;             /* Slightly lighter */
-    --secondary-foreground: 250 250 249;
-    --muted: 36 35 34;
-    --muted-foreground: 168 162 158;   /* Stone-400 */
-    --accent: 46 44 43;
-    --accent-foreground: 250 250 249;
-    --destructive: 185 28 28;
-    --destructive-foreground: 255 255 255;
-    --border: 46 44 43;
-    --input: 46 44 43;
-    --ring: 255 69 58;                /* Vibrant Red for dark ring */
+    --uni-primary: 0 100% 40%;              /* Texas Tech Red */
+    --background: 0 0% 0%;                  /* Texas Tech Black #000000 */
+    --foreground: 0 0% 100%;                /* White #FFFFFF */
+    --card: 0 0% 8%;                        /* Near black card surface */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 100% 40%;                  /* Texas Tech Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;                  /* Dark Gray */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 100% 40%;
 
-    --sidebar-background: 20 20 19;
-    --sidebar-foreground: 231 229 228;
-    --sidebar-primary: 250 250 249;
-    --sidebar-primary-foreground: 20 20 19;
-    --sidebar-accent: 36 35 34;
-    --sidebar-accent-foreground: 231 229 228;
-    --sidebar-border: 46 44 43;
-    --sidebar-ring: 255 69 58;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 70%;
+    --sidebar-primary: 0 100% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 100% 40%;
   }
 }
 
@@ -119,8 +113,8 @@
   }
 
   body {
-    background-color: rgb(var(--background));
-    color: rgb(var(--foreground));
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: var(--font-body);
     font-feature-settings: 'cv11', 'ss01', 'ss03';
   }
@@ -139,14 +133,14 @@
   .font-mono    { font-family: var(--font-mono); }
 
   /* University dynamic accent */
-  .uni-accent-bg     { background-color: rgb(var(--uni-primary)); }
-  .uni-accent-text   { color: rgb(var(--uni-primary)); }
-  .uni-accent-border { border-color: rgb(var(--uni-primary) / 0.3); }
-  .uni-accent-ring   { --tw-ring-color: rgb(var(--uni-primary) / 0.4); }
+  .uni-accent-bg     { background-color: hsl(var(--uni-primary)); }
+  .uni-accent-text   { color: hsl(var(--uni-primary)); }
+  .uni-accent-border { border-color: hsl(var(--uni-primary) / 0.3); }
+  .uni-accent-ring   { --tw-ring-color: hsl(var(--uni-primary) / 0.4); }
 
   /* Deep Blue accent (primary action) */
-  .lumi-blue { color: #1D4ED8; }
-  .lumi-blue-bg { background-color: #1D4ED8; }
+  .lumi-blue { color: hsl(var(--primary)); }
+  .lumi-blue-bg { background-color: hsl(var(--primary)); }
   .lumi-gold { color: #B48F2A; }
 }
 
@@ -167,11 +161,11 @@
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--muted-foreground) / 0.25);
+  background: hsl(var(--muted-foreground) / 0.25);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--muted-foreground) / 0.45);
+  background: hsl(var(--muted-foreground) / 0.45);
 }
 
 /* ============================================
@@ -184,9 +178,9 @@
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    rgb(var(--muted)) 25%,
-    rgb(var(--muted-foreground) / 0.08) 50%,
-    rgb(var(--muted)) 75%
+    hsl(var(--muted)) 25%,
+    hsl(var(--muted-foreground) / 0.08) 50%,
+    hsl(var(--muted)) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
