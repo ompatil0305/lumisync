@@ -14,6 +14,44 @@ export default function BuildingDetail() {
   const { data: diningVenues = [] } = useDiningVenues();
   const { data: parkingLots = [] } = useParkingLots();
 
+  // Issue reporting states
+  const [isReporting, setIsReporting] = useState(false);
+  const [issueText, setIssueText] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleSubmitIssue = async () => {
+    if (!issueText.trim() || !building) return;
+    setSubmitting(true);
+    try {
+      const response = await fetch('https://lumisync-backend-production.up.railway.app/api/v1/issues', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entity_type: 'building',
+          entity_id: building.id,
+          issue_description: issueText,
+          reporter_contact: contactInfo
+        })
+      });
+      if (response.ok) {
+        setSubmitSuccess(true);
+        setIssueText('');
+        setContactInfo('');
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setIsReporting(false);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error('Failed to submit issue:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+
   if (isBuildingLoading) {
     return (
       <div className="min-h-full flex items-center justify-center bg-background">
@@ -267,6 +305,59 @@ export default function BuildingDetail() {
             </div>
           </div>
         )}
+
+        {/* Report an Issue Card */}
+        <div className="bg-card border border-border rounded-2xl p-4 mb-4 mt-4 shadow-sm">
+          <button 
+            onClick={() => setIsReporting(!isReporting)}
+            className="w-full text-left font-bold text-xs text-muted-foreground uppercase tracking-wider flex justify-between items-center"
+          >
+            <span>Report a Map or Access Issue</span>
+            <span className="text-primary font-medium hover:underline normal-case text-xs">
+              {isReporting ? 'Close' : 'Report'}
+            </span>
+          </button>
+          
+          {isReporting && (
+            <div className="mt-3 space-y-3">
+              {submitSuccess ? (
+                <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-xl p-3 text-xs font-semibold flex items-center gap-2">
+                  <Check size={16} />
+                  Thank you! Your issue report has been submitted.
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-[10px] text-muted-foreground font-semibold uppercase mb-1">Issue Description</label>
+                    <textarea
+                      placeholder="e.g. Will Rogers statue accessibility path is under construction, or elevator in Holden Hall is temporarily closed."
+                      value={issueText}
+                      onChange={(e) => setIssueText(e.target.value)}
+                      className="w-full bg-muted border border-border rounded-xl p-2.5 text-xs outline-none focus:border-primary resize-none h-20 text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-muted-foreground font-semibold uppercase mb-1">Contact Info (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. student@ttu.edu"
+                      value={contactInfo}
+                      onChange={(e) => setContactInfo(e.target.value)}
+                      className="w-full bg-muted border border-border rounded-xl p-2.5 text-xs outline-none focus:border-primary text-foreground"
+                    />
+                  </div>
+                  <button
+                    onClick={handleSubmitIssue}
+                    disabled={submitting || !issueText.trim()}
+                    className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold text-xs py-2.5 rounded-xl disabled:opacity-50 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    {submitting ? 'Submitting...' : 'Submit Report'}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Navigate button */}
         <button

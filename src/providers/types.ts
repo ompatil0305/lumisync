@@ -99,6 +99,7 @@ export interface CampusBuilding {
   emergencyPhones?: string;
   aedLocations?: string[];
   favoriteSupport?: boolean;
+  needsReview?: boolean;
   searchKeywords?: string[];
   dataSource?: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
 }
@@ -133,6 +134,7 @@ export interface FacultyMember {
   photo?: string;
   website?: string;
   coordinates?: [number, number]; // Office location on map
+  needsReview?: boolean;
   dataSource: 'live-public' | 'official-directory' | 'licensed-static' | 'demo';
 }
 
