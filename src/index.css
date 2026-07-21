@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   LUMISYNC DESIGN SYSTEM — BRAND TOKENS
+   Universal palette. University-agnostic.
+   ============================================ */
+
+@layer base {
+  :root {
+    /* --- Texas Tech Brand HSL Tokens --- */
+    --uni-primary: 0 100% 40%;              /* Texas Tech Red #CC0000 */
+    --uni-primary-foreground: 0 0% 100%;    /* White #FFFFFF */
+
+    /* --- shadcn/ui tokens (Light) --- */
+    --background: 0 0% 100%;                /* White #FFFFFF */
+    --foreground: 0 0% 0%;                  /* Black #000000 */
+    --card: 0 0% 100%;                      /* White */
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 100% 40%;                  /* Texas Tech Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96.1%;                /* Light Gray #F5F5F5 */
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 20%;           /* Mid Gray #333333 */
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84.2% 60.2%;          /* Genuine alert red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 80%;                    /* Border Gray #CCCCCC */
+    --input: 0 0% 80%;
+    --ring: 0 100% 40%;
+    --radius: 0.75rem;
+
+    /* --- Sidebar tokens --- */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 0 100% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96.1%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 80%;
+    --sidebar-ring: 0 100% 40%;
+
+    /* --- Status Colors --- */
+    --success: 142.1 76.2% 36.3%;          /* Green */
+    --success-fg: 0 0% 100%;
+    --warning: 38 92% 50%;                 /* Amber */
+    --warning-fg: 0 0% 100%;
+    --info: 0 100% 40%;
+    --info-fg: 0 0% 100%;
+
+    /* --- Typography Scale --- */
+    --font-display: 'Outfit', -apple-system, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+    /* --- Spacing & Sizing --- */
+    --nav-height: 4rem;
+    --splash-duration: 2s;
+  }
+
+  .dark {
+    --uni-primary: 0 100% 40%;              /* Texas Tech Red */
+    --background: 0 0% 0%;                  /* Texas Tech Black #000000 */
+    --foreground: 0 0% 100%;                /* White #FFFFFF */
+    --card: 0 0% 8%;                        /* Near black card surface */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 100% 40%;                  /* Texas Tech Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;                  /* Dark Gray */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 100% 40%;
+
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 70%;
+    --sidebar-primary: 0 100% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 100% 40%;
+  }
+}
+
+/* ============================================
+   GLOBAL BASE STYLES
+   ============================================ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body);
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+/* ============================================
+   LUMISYNC UTILITY CLASSES
+   ============================================ */
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-body    { font-family: var(--font-body); }
+  .font-mono    { font-family: var(--font-mono); }
+
+  /* University dynamic accent */
+  .uni-accent-bg     { background-color: hsl(var(--uni-primary)); }
+  .uni-accent-text   { color: hsl(var(--uni-primary)); }
+  .uni-accent-border { border-color: hsl(var(--uni-primary) / 0.3); }
+  .uni-accent-ring   { --tw-ring-color: hsl(var(--uni-primary) / 0.4); }
+
+  /* Deep Blue accent (primary action) */
+  .lumi-blue { color: hsl(var(--primary)); }
+  .lumi-blue-bg { background-color: hsl(var(--primary)); }
+  .lumi-gold { color: #B48F2A; }
+}
+
+/* ============================================
+   LEAFLET MAP DARK MODE
+   ============================================ */
+.dark .leaflet-container {
+  filter: brightness(0.72) contrast(1.12) saturate(0.9);
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18) !important;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.45);
+}
+
+/* ============================================
+   SKELETON SHIMMER
+   ============================================ */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--muted-foreground) / 0.08) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ============================================
+   SPLASH SCREEN
+   ============================================ */
+@keyframes splash-logo-in {
+  0%   { opacity: 0; transform: scale(0.88) translateY(12px); }
+  60%  { opacity: 1; transform: scale(1.02) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes splash-tagline-in {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes splash-fade-out {
+  0%   { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+.splash-logo    { animation: splash-logo-in 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.splash-tagline { animation: splash-tagline-in 0.5s ease forwards 0.55s; opacity: 0; }
+.splash-exit    { animation: splash-fade-out 0.45s ease forwards; }
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+.page-enter        { opacity: 0; transform: translateY(8px); }
+.page-enter-active { opacity: 1; transform: translateY(0); transition: opacity 0.2s ease, transform 0.22s ease; }
+.page-exit         { opacity: 1; }
+.page-exit-active  { opacity: 0; transition: opacity 0.15s ease; }
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* Glass morphism card */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.dark .glass {
+  background: rgba(17, 17, 30, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}

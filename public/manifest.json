@@ -1,0 +1,28 @@
+{
+  "name": "Lumisync",
+  "short_name": "Lumisync",
+  "description": "Campus life, in motion. Lumisync unifies your campus map, dining, parking, faculty directory, and AI assistant into one app.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAFC",
+  "theme_color": "#CC0000",
+  "categories": ["education", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "lang": "en-US",
+  "dir": "ltr"
+}

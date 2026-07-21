@@ -1,0 +1,662 @@
+// ============================================
+// Texas Tech University Provider
+// ============================================
+// Implements the UniversityProvider interface for Texas Tech.
+// This is the only file that needs to change to support a different university.
+
+import type {
+  UniversityProvider,
+  UniversityInfo,
+  CampusBuilding,
+  DiningVenue,
+  ParkingLot,
+  ShuttleRoute,
+  CampusEvent,
+  CampusJob,
+  StudentOrg,
+  CampusAlert,
+  SearchResult,
+  BuildingCategory,
+  MapCategory,
+  FacultyMember,
+} from './types';
+
+import {
+  ttuProfile,
+  buildings as rawBuildings,
+  diningVenues as rawDining,
+  parkingLots as rawParking,
+  shuttleRoutes as rawShuttle,
+  campusEvents as rawEvents,
+  campusJobs as rawJobs,
+  studentOrgs as rawOrgs,
+  campusAlerts as rawAlerts,
+  mapCategories as rawMapCategories,
+} from '../data/universityProfile';
+
+import { facultyMembers } from '../data/facultyDirectory';
+import { fetchWeather } from '../services/weatherService';
+import ttuCampusJson from '../data/ttu-campus.json';
+
+// ---- University Info ----
+const info: UniversityInfo = {
+  id: 'ttu',
+  name: 'Texas Tech University',
+  shortName: 'Texas Tech',
+  mascot: 'Red Raiders',
+  colors: ttuProfile.colors,
+  location: ttuProfile.location,
+  tagline: 'One Campus. One Intelligence.',
+  urls: {
+    ...ttuProfile.urls,
+    faculty: 'https://www.ttu.edu/directory/',
+  },
+};
+
+// ---- Building ID Mappings ----
+const ID_MAPPING: Record<string, string> = {
+  'student-union': 'sub',
+  'rawls-college-of-business': 'rawls-college',
+  'holden-hall': 'holden-hall',
+  'texas-tech-university-library': 'university-library',
+  'administration-building': 'admin-building',
+  'english-philosophy-building': 'english-phil',
+  'talkington-hall': 'talkington-hall',
+  'jones-att-stadium': 'jones-stadium',
+  'student-recreation-center': 'student-rec',
+  'student-wellness-center': 'student-health',
+  'moody-planetarium': 'moody-planetarium'
+};
+
+// ---- Data Transformation ----
+
+const idsSeen = new Set<string>();
+
+// Merge OSM building footprints and coordinates with local detailed profiles
+const buildings: CampusBuilding[] = (ttuCampusJson as any[]).map((osmB) => {
+  let targetId = osmB.id;
+  if (ID_MAPPING[osmB.id]) {
+    targetId = ID_MAPPING[osmB.id];
+  }
+
+  // Deduplicate duplicate OSM IDs using a suffix counter
+  let baseId = targetId;
+  let uniqueId = baseId;
+  let counter = 1;
+  while (idsSeen.has(uniqueId)) {
+    uniqueId = `${baseId}-${counter}`;
+    counter++;
+  }
+  idsSeen.add(uniqueId);
+
+  const rawMatch = rawBuildings.find((r) => r.id === targetId || r.name.toLowerCase() === osmB.name.toLowerCase());
+  
+  // Normalize category mapping
+  let category: CampusBuilding['category'] = osmB.category as any;
+  if (rawMatch?.category) {
+    if (rawMatch.category === 'administrative') category = 'admin';
+    else if (rawMatch.category === 'landmark' || rawMatch.category === 'health' || rawMatch.category === 'museum') category = 'other' as any;
+    else category = rawMatch.category as any;
+  }
+
+  if (category === 'administrative' as any) category = 'admin';
+  if (!['academic', 'dining', 'parking', 'residence', 'recreation', 'library', 'admin', 'other'].includes(category)) {
+    category = 'other' as any;
+  }
+
+  const name = rawMatch?.name || osmB.name;
+  const description = rawMatch?.description || `${name} on the Texas Tech University campus.`;
+
+  return {
+    id: uniqueId,
+    slug: uniqueId,
+    officialNumber: osmB.officialNumber || 'N/A',
+    name,
+    aliases: Array.from(new Set([...(osmB.aliases || []), ...(rawMatch?.aliases || [])])),
+    category,
+    coordinates: osmB.coordinates,
+    latitude: osmB.coordinates.lat,
+    longitude: osmB.coordinates.lng,
+    footprint: osmB.footprint,
+    entrances: osmB.entrances || [],
+    hours: osmB.hours || {},
+    accessibility: {
+      wheelchairEntrance: osmB.accessibility?.wheelchairEntrance ?? rawMatch?.wheelchairAccessible ?? true,
+      elevatorAvailable: osmB.accessibility?.elevatorAvailable ?? true,
+      restroomsAccessible: true,
+      elevatorsCount: rawMatch?.floors && rawMatch.floors > 1 ? 1 : 0,
+      bikeRacksAvailable: true,
+      emergencyPhonesNearby: true,
+      aedLocations: rawMatch?.aedLocations || ['Main Lobby']
+    },
+    photos: rawMatch?.photo ? [rawMatch.photo] : [],
+    
+    // Optional detailed parameters
+    abbreviation: rawMatch?.abbreviation || osmB.abbreviation,
+    departments: rawMatch?.departments,
+    address: rawMatch?.address || osmB.address,
+    description,
+    floors: rawMatch?.floors || osmB.floors,
+    hasDining: rawMatch?.hasDining || osmB.hasDining,
+    hasParkingNearby: rawMatch?.hasParkingNearby,
+    nearestShuttleStop: rawMatch?.nearestShuttleStop,
+    website: rawMatch?.website || '',
+    phone: rawMatch?.phone || '',
+    email: rawMatch?.email || '',
+    restrooms: rawMatch?.restrooms || 'Accessible public restrooms available.',
+    accessibleEntrances: osmB.entrances || [],
+    elevators: rawMatch?.elevators || (osmB.accessibility?.elevatorAvailable ? 'Passenger elevators available' : 'Not available'),
+    bikeRacks: rawMatch?.bikeRacks || 'Bike racks located outside main entrance.',
+    emergencyPhones: rawMatch?.emergencyPhones || 'Emergency blue-light phones available near building.',
+    aedLocations: rawMatch?.aedLocations || ['Available inside main entrance lobby.'],
+    favoriteSupport: true,
+    searchKeywords: Array.from(new Set([
+      name.toLowerCase(),
+      uniqueId.toLowerCase(),
+      ...(osmB.aliases || []).map((a: string) => a.toLowerCase()),
+      ...(rawMatch?.aliases || []).map((a: string) => a.toLowerCase()),
+      ...(rawMatch?.departments || []).map((d: string) => d.toLowerCase()),
+      ...(osmB.abbreviation ? [osmB.abbreviation.toLowerCase()] : []),
+      ...(rawMatch?.abbreviation ? [rawMatch.abbreviation.toLowerCase()] : [])
+    ])),
+    dataSource: 'official-directory'
+  };
+});
+
+function transformDining(d: typeof rawDining[0]): DiningVenue {
+  return {
+    ...d,
+    phone: undefined,
+    website: undefined,
+    dataSource: 'official-directory',
+  };
+}
+
+function transformParking(p: typeof rawParking[0]): ParkingLot {
+  return {
+    ...p,
+    photo: undefined,
+    dataSource: 'official-directory',
+  };
+}
+
+function transformShuttle(s: typeof rawShuttle[0]): ShuttleRoute {
+  return {
+    ...s,
+    dataSource: 'official-directory',
+  };
+}
+
+function transformEvent(e: typeof rawEvents[0]): CampusEvent {
+  return {
+    ...e,
+    dataSource: 'official-directory',
+  };
+}
+
+function transformJob(j: typeof rawJobs[0]): CampusJob {
+  return {
+    ...j,
+    dataSource: 'official-directory',
+  };
+}
+
+function transformOrg(o: typeof rawOrgs[0]): StudentOrg {
+  return {
+    ...o,
+    dataSource: 'official-directory',
+  };
+}
+
+function transformAlert(a: typeof rawAlerts[0]): CampusAlert {
+  return {
+    ...a,
+    dataSource: 'official-directory',
+  };
+}
+
+// ---- Cached Data ----
+const diningVenues = rawDining.map(transformDining);
+const parkingLots = rawParking.map(transformParking);
+const shuttleRoutes = rawShuttle.map(transformShuttle);
+const campusEvents = rawEvents.map(transformEvent);
+const campusJobs = rawJobs.map(transformJob);
+const studentOrgs = rawOrgs.map(transformOrg);
+const campusAlerts = rawAlerts.map(transformAlert);
+const mapCategories = [...rawMapCategories] as MapCategory[];
+
+// ---- API Client Configurations ----
+const API_BASE = 'https://lumisync-backend-production.up.railway.app/api/v1';
+
+function mapApiBuildingToFrontend(apiB: any): CampusBuilding {
+  return {
+    id: apiB.slug,
+    slug: apiB.slug,
+    name: apiB.name,
+    officialNumber: apiB.official_number || 'N/A',
+    category: apiB.category,
+    abbreviation: apiB.slug.toUpperCase(),
+    aliases: apiB.aliases || [],
+    coordinates: { lat: apiB.latitude, lng: apiB.longitude },
+    latitude: apiB.latitude,
+    longitude: apiB.longitude,
+    footprint: apiB.footprint,
+    entrances: apiB.entrances || [],
+    hours: apiB.hours || {},
+    accessibility: {
+      wheelchairEntrance: apiB.wheelchair_entrance,
+      elevatorAvailable: apiB.elevator_available,
+      restroomsAccessible: true,
+      elevatorsCount: apiB.elevator_available ? 1 : 0,
+      bikeRacksAvailable: true,
+      emergencyPhonesNearby: true,
+      aedLocations: ['Main Lobby']
+    },
+    photos: apiB.photos || [],
+    needsReview: apiB.needs_verification,
+    dataSource: 'official-directory',
+    favoriteSupport: true,
+    searchKeywords: [
+      apiB.name.toLowerCase(),
+      apiB.slug.toLowerCase(),
+      ...(apiB.aliases || []).map((a: string) => a.toLowerCase())
+    ]
+  };
+}
+
+function mapApiFacultyToFrontend(apiF: any, buildingsList: CampusBuilding[]): FacultyMember {
+  const names = apiF.full_name.split(' ');
+  const firstName = names[0] || '';
+  const lastName = names[names.length - 1] || '';
+  
+  // Find building slug from buildingsList using office_building_id
+  const matchingBuilding = buildingsList.find(b => b.id === apiF.office_building_id || b.slug === apiF.office_building_id);
+  const officeBuildingId = matchingBuilding ? matchingBuilding.slug : 'holden-hall';
+  
+  return {
+    id: apiF.id,
+    firstName,
+    lastName,
+    fullName: apiF.full_name,
+    department: apiF.department,
+    position: apiF.title || 'Faculty Member',
+    officeBuildingId,
+    officeRoom: apiF.office_room || 'N/A',
+    officePhone: apiF.phone || 'N/A',
+    email: apiF.email || 'N/A',
+    biography: `${apiF.full_name} is a faculty member in the Department of ${apiF.department} at Texas Tech University.`,
+    researchInterests: [apiF.department, 'Academic Research'],
+    coursesTaught: [],
+    website: apiF.profile_url || '',
+    coordinates: matchingBuilding ? [matchingBuilding.latitude, matchingBuilding.longitude] : [33.5842, -101.8801],
+    dataSource: 'official-directory',
+    needsReview: apiF.needs_verification
+  };
+}
+
+// ---- Provider Implementation ----
+export const texasTechProvider: UniversityProvider = {
+  info,
+
+  // Buildings
+  async getBuildings() {
+    try {
+      const res = await fetch(`${API_BASE}/buildings`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map(mapApiBuildingToFrontend);
+    } catch (err) {
+      console.warn('Failed to fetch buildings from API, falling back to static data:', err);
+      return buildings;
+    }
+  },
+
+  async getBuildingById(id: string) {
+    try {
+      const res = await fetch(`${API_BASE}/buildings/${id}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return mapApiBuildingToFrontend(data);
+    } catch (err) {
+      console.warn(`Failed to fetch building ${id} from API, falling back to static data:`, err);
+      return buildings.find((b) => b.id === id || b.slug === id);
+    }
+  },
+
+  async getBuildingsByCategory(category: BuildingCategory) {
+    try {
+      const res = await fetch(`${API_BASE}/buildings?category=${category}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map(mapApiBuildingToFrontend);
+    } catch (err) {
+      console.warn(`Failed to fetch buildings by category ${category} from API, falling back to static data:`, err);
+      return buildings.filter((b) => b.category === category);
+    }
+  },
+
+  async searchBuildings(query: string) {
+    const q = query.toLowerCase().trim();
+    if (!q) return [];
+    const list = await this.getBuildings();
+    return list.filter(
+      (b) =>
+        b.name.toLowerCase().includes(q) ||
+        b.officialNumber.toLowerCase().includes(q) ||
+        b.aliases.some((a) => a.toLowerCase().includes(q)) ||
+        b.abbreviation?.toLowerCase().includes(q) ||
+        b.departments?.some((d) => d.toLowerCase().includes(q)) ||
+        b.description?.toLowerCase().includes(q) ||
+        b.address?.toLowerCase().includes(q)
+    );
+  },
+
+  // Faculty
+  async getFaculty() {
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+    } catch (err) {
+      console.warn('Failed to fetch faculty from API, falling back to static data:', err);
+      return facultyMembers;
+    }
+  },
+
+  async getFacultyById(id: string) {
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty/${id}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return mapApiFacultyToFrontend(data, bList);
+    } catch (err) {
+      console.warn(`Failed to fetch faculty ${id} from API, falling back to static data:`, err);
+      return facultyMembers.find((f) => f.id === id);
+    }
+  },
+
+  async getFacultyByDepartment(department: string) {
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty?department=${encodeURIComponent(department)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+    } catch (err) {
+      console.warn(`Failed to fetch faculty by department ${department} from API, falling back to static data:`, err);
+      return facultyMembers.filter((f) => f.department === department);
+    }
+  },
+
+  async searchFaculty(query: string) {
+    const q = query.toLowerCase().trim();
+    if (!q) return [];
+    try {
+      const bList = await this.getBuildings();
+      const res = await fetch(`${API_BASE}/faculty?search=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+    } catch (err) {
+      console.warn(`Failed to search faculty ${query} from API, falling back to static data:`, err);
+      return facultyMembers.filter(
+        (f) =>
+          f.fullName.toLowerCase().includes(q) ||
+          f.department.toLowerCase().includes(q) ||
+          f.position.toLowerCase().includes(q) ||
+          f.researchInterests?.some((r) => r.toLowerCase().includes(q)) ||
+          f.email?.toLowerCase().includes(q)
+      );
+    }
+  },
+
+  // Dining
+  async getDiningVenues() {
+    return diningVenues;
+  },
+
+  async getDiningVenueById(id: string) {
+    return diningVenues.find((d) => d.id === id);
+  },
+
+  async getOpenDiningVenues() {
+    const now = new Date();
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = days[now.getDay()];
+    return diningVenues.filter((v) => {
+      const hours = v.hours[today];
+      if (!hours || hours.open === 'Closed') return false;
+      const [openH, openM] = hours.open.split(':').map(Number);
+      const [closeH, closeM] = hours.close.split(':').map(Number);
+      const openMin = openH * 60 + (openM || 0);
+      const closeMin = closeH * 60 + (closeM || 0);
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      return nowMin >= openMin && nowMin < closeMin;
+    });
+  },
+
+  // Parking
+  async getParkingLots() {
+    return parkingLots;
+  },
+
+  async getParkingLotById(id: string) {
+    return parkingLots.find((p) => p.id === id);
+  },
+
+  // Shuttle
+  async getShuttleRoutes() {
+    return shuttleRoutes;
+  },
+
+  async getShuttleRouteById(id: string) {
+    return shuttleRoutes.find((s) => s.id === id);
+  },
+
+  // Events
+  async getEvents() {
+    return campusEvents;
+  },
+
+  async getEventById(id: string) {
+    return campusEvents.find((e) => e.id === id);
+  },
+
+  async getEventsByDate(date: string) {
+    return campusEvents.filter((e) => e.date === date);
+  },
+
+  // Jobs
+  async getJobs() {
+    return campusJobs;
+  },
+
+  async getJobById(id: string) {
+    return campusJobs.find((j) => j.id === id);
+  },
+
+  // Organizations
+  async getOrganizations() {
+    return studentOrgs;
+  },
+
+  async getOrganizationById(id: string) {
+    return studentOrgs.find((o) => o.id === id);
+  },
+
+  // Alerts
+  async getAlerts() {
+    return campusAlerts;
+  },
+
+  // Weather
+  async getWeather() {
+    return fetchWeather(info.location.coordinates[0], info.location.coordinates[1]);
+  },
+
+  // Global Search
+  async globalSearch(query: string): Promise<SearchResult[]> {
+    const q = query.toLowerCase();
+    if (q.length < 2) return [];
+
+    const results: SearchResult[] = [];
+    const bList = await this.getBuildings();
+    const fList = await this.getFaculty();
+
+    // Search buildings
+    bList
+      .filter(
+        (b) =>
+          b.name.toLowerCase().includes(q) ||
+          (b.officialNumber && b.officialNumber !== 'N/A' && b.officialNumber.toLowerCase().includes(q)) ||
+          b.officialNumber.toLowerCase().includes(q) ||
+          b.aliases.some((a) => a.toLowerCase().includes(q)) ||
+          b.abbreviation?.toLowerCase().includes(q) ||
+          b.departments?.some((d) => d.toLowerCase().includes(q))
+      )
+      .forEach((b) =>
+        results.push({
+          id: b.id,
+          type: 'building',
+          title: b.name,
+          subtitle: (b.abbreviation || b.officialNumber) + (b.departments && b.departments.length > 0 ? ` - ${b.departments[0]}` : ''),
+          icon: 'Building2',
+          coordinates: [b.latitude, b.longitude],
+          category: b.category,
+          dataSource: b.dataSource || 'official-directory',
+        })
+      );
+
+    // Search faculty
+    fList
+      .filter(
+        (f) =>
+          f.fullName.toLowerCase().includes(q) ||
+          f.department.toLowerCase().includes(q) ||
+          f.researchInterests?.some((r) => r.toLowerCase().includes(q))
+      )
+      .forEach((f) =>
+        results.push({
+          id: f.id,
+          type: 'faculty',
+          title: f.fullName,
+          subtitle: `${f.position}, ${f.department}`,
+          icon: 'User',
+          coordinates: f.coordinates,
+          category: f.department,
+          dataSource: f.dataSource,
+        })
+      );
+
+    // Search dining
+    diningVenues
+      .filter((d) => d.name.toLowerCase().includes(q) || d.location.toLowerCase().includes(q))
+      .forEach((d) =>
+        results.push({
+          id: d.id,
+          type: 'dining',
+          title: d.name,
+          subtitle: d.location,
+          icon: 'UtensilsCrossed',
+          coordinates: d.coordinates,
+          category: d.category,
+          dataSource: d.dataSource,
+        })
+      );
+
+    // Search parking
+    parkingLots
+      .filter((p) => p.name.toLowerCase().includes(q))
+      .forEach((p) =>
+        results.push({
+          id: p.id,
+          type: 'parking',
+          title: p.name,
+          subtitle: `${p.permitRequired.join(', ')} | ${p.status}`,
+          icon: 'Car',
+          coordinates: p.coordinates,
+          category: p.category,
+          dataSource: p.dataSource,
+        })
+      );
+
+    // Search events
+    campusEvents
+      .filter(
+        (e) =>
+          e.title.toLowerCase().includes(q) ||
+          e.organization.toLowerCase().includes(q) ||
+          e.location.toLowerCase().includes(q)
+      )
+      .forEach((e) =>
+        results.push({
+          id: e.id,
+          type: 'event',
+          title: e.title,
+          subtitle: `${e.date} ${e.startTime} - ${e.location}`,
+          icon: 'Calendar',
+          coordinates: e.coordinates,
+          category: e.category,
+          dataSource: e.dataSource,
+        })
+      );
+
+    // Search organizations
+    studentOrgs
+      .filter(
+        (o) =>
+          o.name.toLowerCase().includes(q) ||
+          o.category.toLowerCase().includes(q) ||
+          o.description.toLowerCase().includes(q)
+      )
+      .forEach((o) =>
+        results.push({
+          id: o.id,
+          type: 'organization',
+          title: o.name,
+          subtitle: o.category,
+          icon: 'Users',
+          category: o.category,
+          dataSource: o.dataSource,
+        })
+      );
+
+    // Search jobs
+    campusJobs
+      .filter(
+        (j) =>
+          j.title.toLowerCase().includes(q) ||
+          j.department.toLowerCase().includes(q) ||
+          j.type.toLowerCase().includes(q)
+      )
+      .forEach((j) =>
+        results.push({
+          id: j.id,
+          type: 'job',
+          title: j.title,
+          subtitle: `${j.department} | ${j.payRange}/hr`,
+          icon: 'Briefcase',
+          category: j.type,
+          dataSource: j.dataSource,
+        })
+      );
+
+    // Return sorted by relevance (exact matches first)
+    return results.sort((a, b) => {
+      const aExact = a.title.toLowerCase() === q;
+      const bExact = b.title.toLowerCase() === q;
+      if (aExact && !bExact) return -1;
+      if (bExact && !aExact) return 1;
+      return a.title.localeCompare(b.title);
+    });
+  },
+
+  // Map Categories
+  getMapCategories() {
+    return mapCategories;
+  },
+};
+
