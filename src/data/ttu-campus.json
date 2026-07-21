@@ -1,7 +1,7 @@
 [
   {
     "id": "texas-tech-university-library",
-    "officialNumber": "N/A",
+    "officialNumber": "0018",
     "name": "Texas Tech University Library",
     "aliases": [],
     "category": "library",
@@ -75,16 +75,27 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "6:00 AM - 12:00 AM",
+      "tuesday": "6:00 AM - 12:00 AM",
+      "wednesday": "6:00 AM - 12:00 AM",
+      "thursday": "6:00 AM - 12:00 AM",
+      "friday": "6:00 AM - 10:00 PM",
+      "saturday": "9:00 AM - 8:00 PM",
+      "sunday": "12:00 PM - 12:00 AM"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_note": "Fall/Spring semester hours. Extended 24/7 during finals week.",
+    "hours_source": "https://lib.ttu.edu/hours",
+    "hours_status": "verified"
   },
   {
     "id": "student-union",
-    "officialNumber": "N/A",
+    "officialNumber": "0206",
     "name": "Student Union",
     "aliases": [],
     "category": "academic",
@@ -378,16 +389,27 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "7:00 AM - 10:00 PM",
+      "tuesday": "7:00 AM - 10:00 PM",
+      "wednesday": "7:00 AM - 10:00 PM",
+      "thursday": "7:00 AM - 10:00 PM",
+      "friday": "7:00 AM - 6:00 PM",
+      "saturday": "10:00 AM - 6:00 PM",
+      "sunday": "12:00 PM - 8:00 PM"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_note": "SUB building hours. Individual dining venues inside may vary.",
+    "hours_source": "https://www.depts.ttu.edu/hospitality/dining_hours.php",
+    "hours_status": "verified"
   },
   {
     "id": "administration-building",
-    "officialNumber": "N/A",
+    "officialNumber": "0002",
     "name": "Administration Building",
     "aliases": [],
     "category": "admin",
@@ -482,7 +504,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "engineering-and-materials-research-center",
@@ -541,11 +564,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "chemistry-building",
-    "officialNumber": "N/A",
+    "officialNumber": "0005",
     "name": "Chemistry Building",
     "aliases": [],
     "category": "academic",
@@ -664,7 +689,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "stangel-murdough-residence-hall",
@@ -814,12 +840,24 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "7:00 AM - 7:30 PM",
+      "tuesday": "7:00 AM - 7:30 PM",
+      "wednesday": "7:00 AM - 7:30 PM",
+      "thursday": "7:00 AM - 7:30 PM",
+      "friday": "7:00 AM - 7:30 PM",
+      "saturday": "9:00 AM - 7:00 PM",
+      "sunday": "9:00 AM - 2:00 PM"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_note": "The Market at Stangel/Murdough dining hours (Fall/Spring).",
+    "hours_source": "https://www.depts.ttu.edu/hospitality/dining_hours.php",
+    "hours_status": "verified"
   },
   {
     "id": "mathematics-statistics",
@@ -878,11 +916,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "science-building",
-    "officialNumber": "N/A",
+    "officialNumber": "0008",
     "name": "Science Building",
     "aliases": [],
     "category": "academic",
@@ -993,7 +1033,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "biology-lecture-hall",
@@ -1052,7 +1093,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "biology-building",
@@ -1135,7 +1178,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "biology-greenhouse",
@@ -1186,7 +1231,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "national-wind-institute",
@@ -1253,11 +1300,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "education-building",
-    "officialNumber": "N/A",
+    "officialNumber": "0392",
     "name": "Education Building",
     "aliases": [],
     "category": "academic",
@@ -1456,7 +1505,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "english-philosophy-building",
@@ -1707,11 +1757,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "civil-engineering",
-    "officialNumber": "N/A",
+    "officialNumber": "0009",
     "name": "Civil Engineering",
     "aliases": [],
     "category": "academic",
@@ -1810,7 +1862,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "engineering-technology-lab",
@@ -1893,7 +1946,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "frazier-alumni-pavilion",
@@ -1944,7 +1999,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "child-development-research-center",
@@ -2027,11 +2084,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "human-sciences-building",
-    "officialNumber": "N/A",
+    "officialNumber": "0001",
     "name": "Human Sciences Building",
     "aliases": [],
     "category": "academic",
@@ -2166,7 +2225,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "music-building",
@@ -2233,7 +2293,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "dairy-barn",
@@ -2292,7 +2354,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "psychology-building",
@@ -2359,7 +2423,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "university-theatre",
@@ -2458,7 +2524,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "agricultural-pavillion",
@@ -2525,7 +2593,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "southwest-collection-special-collection-library",
@@ -2651,12 +2721,24 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "9:00 AM - 5:00 PM",
+      "tuesday": "9:00 AM - 5:00 PM",
+      "wednesday": "9:00 AM - 5:00 PM",
+      "thursday": "9:00 AM - 5:00 PM",
+      "friday": "9:00 AM - 5:00 PM",
+      "saturday": "By appointment only",
+      "sunday": "Closed"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_note": "Saturday visits require advance appointment. Call 806-742-9070.",
+    "hours_source": "https://swco.ttu.edu",
+    "hours_status": "verified"
   },
   {
     "id": "college-of-media-and-communication",
@@ -2803,7 +2885,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "art-building",
@@ -2918,7 +3002,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "architecture-building",
@@ -3025,11 +3111,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "agricultural-sciences-building",
-    "officialNumber": "N/A",
+    "officialNumber": "0007",
     "name": "Agricultural Sciences Building",
     "aliases": [],
     "category": "academic",
@@ -3100,7 +3188,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "agricultural-education",
@@ -3199,7 +3288,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "fisheries-wildlife-research",
@@ -3290,7 +3381,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "landscape-architecture-and-range-wildlife-and-fisheries-management",
@@ -3373,7 +3466,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "physical-plant-annex",
@@ -3424,7 +3519,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "physical-plant",
@@ -3523,7 +3620,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "wiggins-complex-dining-hall",
@@ -3585,12 +3684,24 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "7:00 AM - 9:00 PM",
+      "tuesday": "7:00 AM - 9:00 PM",
+      "wednesday": "7:00 AM - 9:00 PM",
+      "thursday": "7:00 AM - 9:00 PM",
+      "friday": "7:00 AM - 8:00 PM",
+      "saturday": "10:00 AM - 7:00 PM",
+      "sunday": "10:00 AM - 7:00 PM"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_note": "Ol' Red's at Wiggins dining hours (Fall/Spring). Verify at source.",
+    "hours_source": "https://www.depts.ttu.edu/hospitality/dining_hours.php",
+    "hours_status": "verified"
   },
   {
     "id": "central-heating-cooling-i",
@@ -3697,7 +3808,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "art-3d-annex",
@@ -3756,7 +3869,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "housing-services",
@@ -3839,7 +3954,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "university-parking-services-administrative-support-center",
@@ -3930,7 +4047,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "international-cultural-center",
@@ -4077,7 +4196,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "garrison-geriatric-education-and-care-center",
@@ -4720,7 +4841,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "ktxt-tv-pbs-station",
@@ -4819,7 +4942,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "livestock-arena-meat-lab",
@@ -4994,7 +5119,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "national-ranching-heritage-center",
@@ -5143,7 +5270,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "garst-pavilion",
@@ -5194,7 +5323,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "central-heating-cooling-plant-2",
@@ -5245,7 +5376,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "preston-smith-library",
@@ -5343,16 +5476,28 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "7:30 AM - 10:00 PM",
+      "tuesday": "7:30 AM - 10:00 PM",
+      "wednesday": "7:30 AM - 10:00 PM",
+      "thursday": "7:30 AM - 10:00 PM",
+      "friday": "7:30 AM - 6:00 PM",
+      "saturday": "10:00 AM - 6:00 PM",
+      "sunday": "1:00 PM - 9:00 PM"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_note": "Health Sciences Library hours during Fall/Spring semester.",
+    "hours_source": "https://lib.ttu.edu/hours",
+    "hours_status": "verified"
   },
   {
     "id": "student-recreation-center",
-    "officialNumber": "N/A",
+    "officialNumber": "0501",
     "name": "Student Recreation Center",
     "aliases": [],
     "category": "recreation",
@@ -5598,12 +5743,23 @@
         "label": "Main Entrance"
       }
     ],
-    "hours": {},
+    "hours": {
+      "monday": "5:30 AM - 11:00 PM",
+      "tuesday": "5:30 AM - 11:00 PM",
+      "wednesday": "5:30 AM - 11:00 PM",
+      "thursday": "5:30 AM - 11:00 PM",
+      "friday": "5:30 AM - 10:00 PM",
+      "saturday": "8:00 AM - 8:00 PM",
+      "sunday": "12:00 PM - 10:00 PM"
+    },
     "accessibility": {
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_note": "Main Rec Center hours (Fall/Spring). Aquatic Center hours may differ.",
+    "hours_source": "https://www.depts.ttu.edu/recreation/",
+    "hours_status": "verified"
   },
   {
     "id": "student-pool",
@@ -5698,7 +5854,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "united-supermarkets-arena",
@@ -5889,7 +6047,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "usda-agriculture-research-service",
@@ -6140,11 +6300,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "industrial-mechanical-systems-engineering",
-    "officialNumber": "N/A",
+    "officialNumber": "0003",
     "name": "Industrial, Mechanical & Systems Engineering",
     "aliases": [],
     "category": "academic",
@@ -6255,11 +6417,12 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "electrical-and-computer-engineering",
-    "officialNumber": "N/A",
+    "officialNumber": "0004",
     "name": "Electrical and Computer Engineering",
     "aliases": [],
     "category": "academic",
@@ -6346,7 +6509,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "pulse-lab",
@@ -6501,7 +6665,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "rawls-college-of-business",
@@ -6650,7 +6816,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "murray-residence-hall",
@@ -6925,7 +7093,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "student-wellness-center",
@@ -7016,7 +7186,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "marsha-sharp-center-for-student-athletics",
@@ -7067,7 +7239,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "chitwood-weymouth-residence-hall",
@@ -7150,7 +7324,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "animal-and-food-sciences",
@@ -7353,7 +7529,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "women-s-softball-facility",
@@ -7416,7 +7594,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "plant-sciences-greenhouse",
@@ -7467,7 +7647,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "bayer-plant-science-building",
@@ -7590,7 +7772,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "petroleum-engineering",
@@ -7705,7 +7889,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "experimental-sciences-building",
@@ -7836,7 +8022,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "burkhart-center-for-autism-education-research",
@@ -7903,7 +8091,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "raider-park-garage",
@@ -8010,7 +8200,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "museum-of-texas-tech-university",
@@ -8197,7 +8389,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "texas-tech-police-department",
@@ -8304,7 +8498,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "blue-sky-texas",
@@ -8363,7 +8559,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "jumbo-joe-s-burgers",
@@ -8418,7 +8616,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "everest-mart",
@@ -8469,7 +8669,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "raiders-pass-front-office",
@@ -8624,7 +8826,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "raider-mart",
@@ -8675,7 +8879,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "pj-s-barbershop",
@@ -8726,7 +8932,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "fourth-street-sports-bar",
@@ -8785,7 +8993,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "ttu-system-administration-building",
@@ -8940,7 +9150,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "university-college",
@@ -9071,7 +9283,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "brandon-unit-1",
@@ -9138,7 +9352,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "ttu-innovation-hub",
@@ -9269,7 +9485,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "honors-residence-hall",
@@ -9352,7 +9570,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "chemical-engineering",
@@ -9403,7 +9623,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "livermore-center",
@@ -9514,7 +9736,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "sports-performance-center",
@@ -9637,7 +9861,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "carillion-senior-lifecare-community",
@@ -10144,7 +10370,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "dustin-r-womble-basketball-center",
@@ -10299,7 +10527,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "carillon-house-the-health-center",
@@ -10478,7 +10708,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "academic-event-center",
@@ -10545,7 +10777,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "windsong-at-carillon",
@@ -11000,7 +11234,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "medical-office-plaza-ii",
@@ -11063,7 +11299,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "medical-office-plaza-i",
@@ -11130,7 +11368,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "health-sciences-center-academic-classroom-building",
@@ -11213,7 +11453,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "texas-tech-physicians-medical-pavilion",
@@ -11324,7 +11566,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "cash-family-sports-nutrition-center",
@@ -11391,7 +11635,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "lubbock-va-clinic",
@@ -11466,7 +11712,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "engineering-center",
@@ -11585,7 +11833,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "computer-science",
@@ -11638,7 +11888,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "mechanical-engineering-south",
@@ -11693,7 +11945,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "mechnical-engineering-north",
@@ -11816,7 +12070,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "experimental-sciences-building-ii",
@@ -11907,11 +12163,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "hampton-inn-suites-lubbock-university",
-    "officialNumber": "LBBLUHX",
+    "officialNumber": "N/A",
     "name": "Hampton Inn & Suites Lubbock University",
     "aliases": [],
     "category": "academic",
@@ -11998,7 +12256,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "food-technology",
@@ -12049,7 +12309,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "goddard-range-and-wildlife-management-building",
@@ -12104,7 +12366,9 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "foreign-language-building",
@@ -12187,11 +12451,13 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   },
   {
     "id": "holden-hall",
-    "officialNumber": "N/A",
+    "officialNumber": "0012",
     "name": "Holden Hall",
     "aliases": [],
     "category": "academic",
@@ -12322,7 +12588,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "hours_status": "needs_data"
   },
   {
     "id": "carpenter-wells-residential-complex",
@@ -12765,6 +13032,8 @@
       "wheelchairEntrance": true,
       "elevatorAvailable": true
     },
-    "photos": []
+    "photos": [],
+    "needs_verification": true,
+    "hours_status": "needs_data"
   }
 ]
