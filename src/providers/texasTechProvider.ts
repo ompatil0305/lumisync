@@ -300,15 +300,20 @@ export const texasTechProvider: UniversityProvider = {
 
   // Buildings
   async getBuildings() {
-    try {
-      const res = await fetch(`${API_BASE}/buildings`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      return data.map(mapApiBuildingToFrontend);
-    } catch (err) {
-      console.warn('Failed to fetch buildings from API, falling back to static data:', err);
-      return buildings;
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await fetch(`${API_BASE}/buildings`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.map(mapApiBuildingToFrontend);
+      } catch (err) {
+        lastErr = err;
+        if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 1500));
+      }
     }
+    console.warn('Failed to fetch buildings from API after 3 attempts, falling back to static data:', lastErr);
+    return buildings;
   },
 
   async getBuildingById(id: string) {
@@ -351,18 +356,25 @@ export const texasTechProvider: UniversityProvider = {
     );
   },
 
-  // Faculty
   async getFaculty() {
-    try {
-      const bList = await this.getBuildings();
-      const res = await fetch(`${API_BASE}/faculty`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
-    } catch (err) {
-      console.warn('Failed to fetch faculty from API, falling back to static data:', err);
-      return facultyMembers;
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const bList = await this.getBuildings();
+        const res = await fetch(`${API_BASE}/faculty`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+      } catch (err) {
+        lastErr = err;
+        if (attempt < 3) {
+          // Wait 1.5s before retrying to allow backend to wake up
+          await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+      }
     }
+    console.warn('Failed to fetch faculty from API after 3 attempts, falling back to static data:', lastErr);
+    return facultyMembers;
   },
 
   async getFacultyById(id: string) {
@@ -379,38 +391,48 @@ export const texasTechProvider: UniversityProvider = {
   },
 
   async getFacultyByDepartment(department: string) {
-    try {
-      const bList = await this.getBuildings();
-      const res = await fetch(`${API_BASE}/faculty?department=${encodeURIComponent(department)}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
-    } catch (err) {
-      console.warn(`Failed to fetch faculty by department ${department} from API, falling back to static data:`, err);
-      return facultyMembers.filter((f) => f.department === department);
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const bList = await this.getBuildings();
+        const res = await fetch(`${API_BASE}/faculty?department=${encodeURIComponent(department)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+      } catch (err) {
+        lastErr = err;
+        if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 1500));
+      }
     }
+    console.warn(`Failed to fetch faculty by department ${department} from API after 3 attempts, falling back to static data:`, lastErr);
+    return facultyMembers.filter((f) => f.department === department);
   },
 
   async searchFaculty(query: string) {
     const q = query.toLowerCase().trim();
     if (!q) return [];
-    try {
-      const bList = await this.getBuildings();
-      const res = await fetch(`${API_BASE}/faculty?search=${encodeURIComponent(q)}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
-    } catch (err) {
-      console.warn(`Failed to search faculty ${query} from API, falling back to static data:`, err);
-      return facultyMembers.filter(
-        (f) =>
-          f.fullName.toLowerCase().includes(q) ||
-          f.department.toLowerCase().includes(q) ||
-          f.position.toLowerCase().includes(q) ||
-          f.researchInterests?.some((r) => r.toLowerCase().includes(q)) ||
-          f.email?.toLowerCase().includes(q)
-      );
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const bList = await this.getBuildings();
+        const res = await fetch(`${API_BASE}/faculty?search=${encodeURIComponent(q)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.map((f: any) => mapApiFacultyToFrontend(f, bList));
+      } catch (err) {
+        lastErr = err;
+        if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 1500));
+      }
     }
+    console.warn(`Failed to search faculty ${query} from API after 3 attempts, falling back to static data:`, lastErr);
+    return facultyMembers.filter(
+      (f) =>
+        f.fullName.toLowerCase().includes(q) ||
+        f.department.toLowerCase().includes(q) ||
+        f.position.toLowerCase().includes(q) ||
+        f.researchInterests?.some((r) => r.toLowerCase().includes(q)) ||
+        f.email?.toLowerCase().includes(q)
+    );
   },
 
   // Dining
