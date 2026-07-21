@@ -411,7 +411,7 @@ Feel free to:
 
 # 📄 License
 
-This project is licensed under the GNU General Public License v3 (GPLv3) - a strong copyleft license. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT. See the [LICENSE](LICENSE) file for details.
 
 ---
 
